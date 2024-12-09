@@ -1,7 +1,8 @@
 # CRISalid Institutional Knowledge Graph Apollo GraphQL API
 
 This project is an Apollo GraphQL API that provides access to the CRISalid Institutional Knowledge Graph
-through [Neo4j GraphQL](https://neo4j.com/docs/graphql/current/).
+through [Apollo Server](https://www.apollographql.com/docs/apollo-server/) and
+[Neo4j GraphQL](https://neo4j.com/docs/graphql/current/).
 
 ### Installation
 
