@@ -29,7 +29,7 @@
     "module": "Node16",
     /* Specify what module code is generated. */
     // src and tests
-    "rootDir": "./src",
+    "rootDir": "./",
     /* Specify the root folder within your source files. */
     "moduleResolution": "Node16",
     /* Specify how TypeScript looks up a file from a given module specifier. */
@@ -123,7 +123,8 @@
     /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules"
