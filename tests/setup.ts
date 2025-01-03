@@ -39,6 +39,31 @@ export const runCypherFile = async (filePath: string) => {
   }
 };
 
+export const runCypherStatementsFile = async (filePath: string) => {
+  const session = driver.session();
+  try {
+    // Load and split the Cypher file into individual statements
+    const cypher = fs.readFileSync(filePath, "utf8");
+    const statements = cypher
+      .split(";") // Split by semicolon
+      .map((stmt) => stmt.trim())
+      .filter((stmt) => stmt.length > 0); // Remove empty statements
+
+    // Execute each statement sequentially
+    for (const statement of statements) {
+      console.log(`Executing: ${statement}`);
+      await session.run(statement);
+    }
+
+    console.log("All Cypher statements executed successfully.");
+  } catch (error) {
+    console.error("Error executing Cypher file:", error);
+  } finally {
+    await session.close();
+    await driver.close();
+  }
+};
+
 const clearDatabase = async (driver: Driver) => {
   const session = driver.session();
   try {

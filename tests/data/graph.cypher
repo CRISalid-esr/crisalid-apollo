@@ -8,6 +8,14 @@ MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)
 MERGE (p)-[:HAS_IDENTIFIER]->(i3)
 
+CREATE (rs:ResearchStructure {uid: 'local-123456'})
+CREATE (rsi1:AgentIdentifier {type: 'local', value: '123456'})
+CREATE (rsn:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique'})
+
+MERGE (rs)-[:HAS_IDENTIFIER]->(rsi1)
+MERGE (rs)-[:HAS_NAME]->(rsn)
+
+MERGE (p)-[:MEMBER_OF]->(rs)
 
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données'})

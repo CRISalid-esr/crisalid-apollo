@@ -16,7 +16,7 @@ type TextualDocumentsResponse = {
 
 test("Fetch TextualDocument with source records", async () => {
   const server = await createTestServer();
-  await runCypherFile("tests/data/textual_document.cypher");
+  await runCypherFile("tests/data/graph.cypher");
 
   const GET_TEXTUAL_DOCUMENTS = `
                 query {
