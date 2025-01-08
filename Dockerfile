@@ -14,6 +14,8 @@ RUN npm run build
 # Stage 2: Production
 FROM node:22.9.0 as production
 
+RUN apt-get update && apt-get install -y netcat
+
 WORKDIR /app
 
 COPY --from=builder /app/package.json /app/package-lock.json ./
