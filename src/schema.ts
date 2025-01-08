@@ -27,6 +27,7 @@ type Person @node {
     names: [PersonName!]! @relationship(type: "HAS_NAME", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     memberships: [Organisation!]! @relationship(type: "MEMBER_OF", direction: OUT)
+    external: Boolean
 }
 type Contribution @node {
     uid: ID!
