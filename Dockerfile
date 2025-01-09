@@ -1,5 +1,5 @@
-# Stage 1: Build
-FROM node:22.9.0 as builder
+# Stage 1: build
+FROM node:22.9.0 AS builder
 
 WORKDIR /app
 
@@ -11,10 +11,10 @@ COPY . .
 
 RUN npm run build
 
-# Stage 2: Production
-FROM node:22.9.0 as production
+# Stage 2: production
+FROM node:22.9.0 AS production
 
-RUN apt-get update && apt-get install -y netcat
+RUN apt-get update && apt-get install -y netcat-openbsd
 
 WORKDIR /app
 
