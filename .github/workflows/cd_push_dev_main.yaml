@@ -25,7 +25,7 @@ jobs:
           push: true
           tags: |
             crisalidesr/crisalid-apollo:latest
-            crisalidesr/crisalid-apollo:v0.1-dev
+            crisalidesr/crisalid-apollo:v0.2-dev
           context: .
           file: ./Dockerfile
           build-args: |
