@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@types/cors": "^2.8.17",
     "@types/graphql": "^14.2.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.1",
