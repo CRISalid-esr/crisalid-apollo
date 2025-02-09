@@ -31,6 +31,7 @@ type Person @node {
 }
 type Contribution @node {
     uid: ID!
+    roles: [String!]!
     contributor: [Person!]! @relationship(type: "HAS_CONTRIBUTION", direction: IN)
 }
 type Literal @node {
