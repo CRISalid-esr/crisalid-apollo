@@ -39,6 +39,9 @@ type Literal @node {
 }
 type TextualDocument @node {
     uid: ID!
+    publication_date: String
+    publication_date_start: DateTime
+    publication_date_end: DateTime
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     abstracts: [Literal!]! @relationship(type: "HAS_ABSTRACT", direction: OUT)
     recorded_by: [SourceRecord!]! @relationship(type: "RECORDED_BY", direction: OUT)
