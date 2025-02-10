@@ -18,6 +18,8 @@ Copy the `.env.example` file to `.env` and set the environment variables to matc
 
 ### Running the server
 
+#### Without Docker
+
 The following command will start the server:
 
 ```bash
@@ -25,6 +27,24 @@ npm start
 ```
 
 The server will be available at `http://localhost:4000` (or the port specified in the `.env` file).
+
+#### With Docker
+
+In your `.env` file, change the `NEO4J_URI` variable from `neo4j://localhost:7687` to `neo4j://neo4j:7687`.
+
+Copy the `neo4j/.env.sample` file to `neo4j/.env` and set the environment variables to match your configuration.
+
+If you want to restore a Neo4j database from a dump, copy the dump file to `neo4j/dump/neo4j.dump` and run:
+
+```bash
+RESTORE_NEO4J_DUMP=true docker compose up
+```
+
+If you want to start the server without restoring a dump, run:
+
+```bash
+docker compose up
+```
 
 ### Development
 

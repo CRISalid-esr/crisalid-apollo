@@ -1,0 +1,9 @@
+.idea
+
+.env
+
+backups
+data
+import
+logs
+plugins
