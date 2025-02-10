@@ -1,0 +1,46 @@
+services:
+
+  crisalid-apollo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    ports:
+        - 4000:4000
+    restart: always
+    command: npm run dev
+    env_file:
+      - .env
+
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - 7474:7474
+      - 7687:7687
+    env_file:
+      - ./neo4j/.env
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+      - ./neo4j/import:/import
+      - ./neo4j/backups:/backups
+      - ./neo4j/plugins:/plugins
+  
+  neo4j-loader:
+    image: neo4j/neo4j-admin:5-community
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/backups:/backups
+      - ./neo4j/dumps/neo4j.dump:/neo4j.dump:ro
+    environment:
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - RESTORE_NEO4J_DUMP=${RESTORE_NEO4J_DUMP:-false}
+    entrypoint: |
+      sh -c "
+      if [ \"$${RESTORE_NEO4J_DUMP}\" = \"true\" ]; then
+        echo 'Restoring Neo4j dump...';
+        cat /neo4j.dump | neo4j-admin database load neo4j --from-stdin --overwrite-destination=true;
+      else
+        echo 'Skipping Neo4j dump restoration';
+      fi
+      "
