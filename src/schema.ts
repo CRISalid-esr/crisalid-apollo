@@ -38,8 +38,9 @@ type Literal @node {
     language: String
     value: String!
 }
-type TextualDocument @node {
+type Document @node {
     uid: ID!
+    document_type: String
     publication_date: String
     publication_date_start: DateTime
     publication_date_end: DateTime
@@ -54,4 +55,5 @@ type SourceRecord @node {
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
 }
+
 `;

@@ -105,7 +105,8 @@ MERGE (s)-[:PUBLISHED_IN]->(si)
 MERGE (si)-[:ISSUED_IN]->(j1)
 MERGE (s)-[:HARVESTED_FOR]->(p)
 
-CREATE (doc:TextualDocument {uid: 'doc1',
+CREATE (doc:Document {uid: 'doc1',
+                             document_type: 'JournalArticle',
                              publication_date: '2012-09-19',
                              publication_date_start: '2012-09-19T00:00:00Z',
                              publication_date_end: '2012-09-19T23:59:59Z'})
