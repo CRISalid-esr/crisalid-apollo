@@ -2,6 +2,7 @@ import { createTestServer, runCypherFile } from "../setup";
 
 type SourceRecord = {
   uid: string;
+  url: string;
   harvester: string;
   titles: { language: string; value: string }[];
 };
@@ -36,6 +37,7 @@ test("Fetch TextualDocument with source records", async () => {
                     }
                     recorded_by {
                       uid
+                      url
                       harvester
                       titles {
                           language
@@ -59,6 +61,7 @@ test("Fetch TextualDocument with source records", async () => {
     fail("Expected object");
   }
   expect(document?.uid).toEqual("doc1");
+
   expect(document?.document_type).toEqual("JournalArticle");
   expect(document?.publication_date).toEqual("2012-09-19");
   expect(document?.publication_date_start).toEqual("2012-09-19T00:00:00.000Z");
@@ -79,6 +82,9 @@ test("Fetch TextualDocument with source records", async () => {
   expect(document?.recorded_by).toHaveLength(1);
   const recordedBy = document?.recorded_by[0];
   expect(recordedBy?.uid).toEqual("scanr-doi10.3847/1538-4357/ad0cc0");
+  expect(recordedBy?.url).toEqual(
+    "https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0",
+  );
   expect(recordedBy?.harvester).toEqual("ScanR");
   expect(recordedBy?.titles).toHaveLength(2);
   const recordedByTitles = recordedBy?.titles;

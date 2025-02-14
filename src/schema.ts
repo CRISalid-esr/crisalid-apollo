@@ -52,6 +52,7 @@ type Document @node {
 type SourceRecord @node {
     uid: ID!
     harvester: String!
+    url: String
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
 }

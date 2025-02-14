@@ -91,6 +91,7 @@ CREATE (si:SourceIssue {
 
 CREATE (s:SourceRecord {
   harvester:         'ScanR',
+  url: 'https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0',
   uid:               'scanr-doi10.3847/1538-4357/ad0cc0',
   source_identifier: 'doi10.3847/1538-4357/ad0cc0'
 })
