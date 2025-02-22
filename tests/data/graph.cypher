@@ -117,4 +117,7 @@ CREATE(title2:Literal {language: 'fr',
                        value:    'Nous ne sommes que de la poussière dans le WIM : contraintes sur les propriétés de la poussière dans le milieu ionisé chaud de la Voie Lactée'})
 CREATE (doc)-[:HAS_TITLE]->(title1)
 CREATE (doc)-[:HAS_TITLE]->(title2)
+CREATE (doc)-[:HAS_SUBJECT]->(c1)
+CREATE (doc)-[:HAS_SUBJECT]->(c2)
+CREATE (doc)-[:HAS_SUBJECT]->(c3)
 CREATE (doc)-[:RECORDED_BY]->(s)
