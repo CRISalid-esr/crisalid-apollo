@@ -38,6 +38,12 @@ type Literal @node {
     language: String
     value: String!
 }
+type Concept @node {
+    uid: ID!
+    uri: String
+    pref_labels: [Literal!]! @relationship(type: "HAS_PREF_LABEL", direction: OUT)
+    alt_labels: [Literal!]! @relationship(type: "HAS_ALT_LABEL", direction: OUT)
+}
 type Document @node {
     uid: ID!
     document_type: String
@@ -48,6 +54,7 @@ type Document @node {
     abstracts: [Literal!]! @relationship(type: "HAS_ABSTRACT", direction: OUT)
     recorded_by: [SourceRecord!]! @relationship(type: "RECORDED_BY", direction: OUT)
     has_contributions: [Contribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
+    has_subjects: [Concept!]! @relationship(type: "HAS_SUBJECT", direction: OUT)
 }
 type SourceRecord @node {
     uid: ID!

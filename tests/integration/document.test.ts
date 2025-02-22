@@ -14,6 +14,11 @@ type Document = {
   publication_date_end: string;
   titles: { language: string; value: string }[];
   recorded_by: SourceRecord[];
+  has_subjects: {
+    uid: string;
+    pref_labels: { language: string; value: string }[];
+    alt_labels: { language: string; value: string }[];
+  }[];
 };
 type DocumentsResponse = {
   documents: Document[];
@@ -34,6 +39,17 @@ test("Fetch TextualDocument with source records", async () => {
                     titles {
                       language
                       value
+                    }
+                    has_subjects {
+                      uid
+                      pref_labels {
+                        language
+                        value
+                      }
+                      alt_labels {
+                        language
+                        value
+                      }
                     }
                     recorded_by {
                       uid
@@ -98,5 +114,28 @@ test("Fetch TextualDocument with source records", async () => {
     value:
       "Nous ne sommes que de la poussière dans le WIM : contraintes sur " +
       "les propriétés de la poussière dans le milieu ionisé chaud de la Voie Lactée",
+  });
+  expect(document?.has_subjects).toHaveLength(3);
+  const subjects = document?.has_subjects;
+  expect(subjects).toContainEqual({
+    uid: "http://www.idref.fr/02734004x/id",
+    pref_labels: [{ language: null, value: "Analyse des données" }],
+    alt_labels: [],
+  });
+  expect(subjects).toContainEqual({
+    alt_labels: [{ language: null, value: "Milieu interstellaire" }],
+    pref_labels: [{ language: "fr", value: "Matière interstellaire" }],
+    uid: "http://www.idref.fr/027818055/id",
+  });
+  expect(subjects).toContainEqual({
+    alt_labels: [
+      { language: "en", value: "resolution" },
+      { language: "en", value: "pixel count" },
+    ],
+    pref_labels: [
+      { language: "en", value: "image resolution" },
+      { language: "fr", value: "résolution numérique" },
+    ],
+    uid: "http://www.wikidata.org/entity/Q210521",
   });
 });
