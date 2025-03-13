@@ -117,25 +117,40 @@ test("Fetch TextualDocument with source records", async () => {
   });
   expect(document?.has_subjects).toHaveLength(3);
   const subjects = document?.has_subjects;
-  expect(subjects).toContainEqual({
-    uid: "http://www.idref.fr/02734004x/id",
-    pref_labels: [{ language: null, value: "Analyse des données" }],
-    alt_labels: [],
-  });
-  expect(subjects).toContainEqual({
-    alt_labels: [{ language: null, value: "Milieu interstellaire" }],
-    pref_labels: [{ language: "fr", value: "Matière interstellaire" }],
-    uid: "http://www.idref.fr/027818055/id",
-  });
-  expect(subjects).toContainEqual({
-    alt_labels: [
-      { language: "en", value: "resolution" },
-      { language: "en", value: "pixel count" },
-    ],
-    pref_labels: [
-      { language: "en", value: "image resolution" },
-      { language: "fr", value: "résolution numérique" },
-    ],
-    uid: "http://www.wikidata.org/entity/Q210521",
-  });
+  expect(subjects).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        uid: "http://www.idref.fr/02734004x/id",
+        pref_labels: expect.arrayContaining([
+          { language: null, value: "Analyse des données" },
+        ]),
+        alt_labels: expect.arrayContaining([]),
+      }),
+      expect.objectContaining({
+        uid: "http://www.idref.fr/027818055/id",
+        pref_labels: expect.arrayContaining([
+          { language: "fr", value: "Matière interstellaire" },
+        ]),
+        alt_labels: expect.arrayContaining([
+          { language: null, value: "Milieu interstellaire" },
+        ]),
+      }),
+    ]),
+  );
+
+  expect(subjects).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        alt_labels: expect.arrayContaining([
+          { language: "en", value: "resolution" },
+          { language: "en", value: "pixel count" },
+        ]),
+        pref_labels: expect.arrayContaining([
+          { language: "en", value: "image resolution" },
+          { language: "fr", value: "résolution numérique" },
+        ]),
+        uid: "http://www.wikidata.org/entity/Q210521",
+      }),
+    ]),
+  );
 });

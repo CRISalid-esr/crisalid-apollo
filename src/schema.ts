@@ -9,13 +9,10 @@ type Organisation @node {
     acronym: String
     names: [Literal!]! @relationship(type: "HAS_NAME", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
-    type: String! @cypher(statement: """
-    CALL apoc.meta.nodeTypeProperties()
-    YIELD nodeLabels
-    WHERE nodeLabels = labels(this)
-    RETURN DISTINCT(nodeLabels[-1]) AS type
+    types: [String!]! @cypher(statement: """
+    RETURN labels(this) AS types
     """,
-        columnName: "type")
+        columnName: "types")
 }
 type PersonName @node {
     first_names: [Literal!]! @relationship(type: "HAS_FIRST_NAME", direction: OUT)
@@ -26,9 +23,21 @@ type Person @node {
     display_name: String
     names: [PersonName!]! @relationship(type: "HAS_NAME", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
-    memberships: [Organisation!]! @relationship(type: "MEMBER_OF", direction: OUT)
+    memberships: [Organisation!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "Membership")
+    employments: [Organisation!]! @relationship(type: "EMPLOYED_AT", direction: OUT, properties: "Employment")
     external: Boolean
 }
+type Employment @relationshipProperties {
+    start_date: DateTime
+    end_date: DateTime
+    position_code: String
+}
+type Membership @relationshipProperties {
+    start_date: DateTime
+    end_date: DateTime
+    position_code: String
+}
+
 type Contribution @node {
     uid: ID!
     roles: [String!]!
