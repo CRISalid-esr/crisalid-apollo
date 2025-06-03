@@ -85,11 +85,13 @@ CREATE (j1:SourceJournal {
 })
 
 
-CREATE (ji1:JournalIdentifier {type: 'issn', value: '0004-637X'})
-CREATE (ji2:JournalIdentifier {type: 'issn', value: '1538-4357'})
+CREATE (ji1:JournalIdentifier {type: 'issn', value: '0004-637X', format: 'Print'})
+CREATE (ji2:JournalIdentifier {type: 'issn', value: '1538-4357', format: 'Online'})
+CREATE (ji3:JournalIdentifier {type: 'issn', value: '3478-4357'})
 
 MERGE (j1)-[:HAS_IDENTIFIER]->(ji1)
 MERGE (j1)-[:HAS_IDENTIFIER]->(ji2)
+MERGE (j1)-[:HAS_IDENTIFIER]->(ji3)
 
 CREATE (si:SourceIssue {
   number:            [],
@@ -130,3 +132,11 @@ CREATE (doc)-[:HAS_SUBJECT]->(c1)
 CREATE (doc)-[:HAS_SUBJECT]->(c2)
 CREATE (doc)-[:HAS_SUBJECT]->(c3)
 CREATE (doc)-[:RECORDED_BY]->(s)
+
+CREATE (j:Journal {uid: 'journal-0004-637X', issn_l: '0004-637X', publisher: 'American Astronomical Society', titles: ['The Astrophysical Journal']})
+
+MERGE (j)-[:HAS_IDENTIFIER]->(ji1)
+MERGE (j)-[:HAS_IDENTIFIER]->(ji2)
+MERGE (j)-[:HAS_IDENTIFIER]->(ji3)
+
+CREATE (doc)-[:PUBLISHED_IN {volume: "823", issue: "1", pages: "1–20"}]->(j)
