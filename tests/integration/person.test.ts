@@ -120,6 +120,9 @@ test("Fetch person data", async () => {
     fail("Expected single result");
   }
   const result = body.singleResult;
+  if (result.errors) {
+    console.error(JSON.stringify(result.errors, null, 2));
+  }
   expect(result.errors).toBeUndefined();
   const personData = result.data as PeopleResponse;
   expect(personData?.people).toHaveLength(1);
