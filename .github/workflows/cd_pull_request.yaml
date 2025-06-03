@@ -13,7 +13,7 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:latest
+        image: neo4j:5-community
         env:
           NEO4J_AUTH: none
           NEO4JLABS_PLUGINS: '["apoc"]'
