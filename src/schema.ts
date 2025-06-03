@@ -64,6 +64,7 @@ type Document @node {
     recorded_by: [SourceRecord!]! @relationship(type: "RECORDED_BY", direction: OUT)
     has_contributions: [Contribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
     has_subjects: [Concept!]! @relationship(type: "HAS_SUBJECT", direction: OUT)
+    publishedIn: [Journal!]! @relationship(type: "PUBLISHED_IN", direction: OUT, properties: "PublishedIn")
 }
 type SourceRecord @node {
     uid: ID!
@@ -71,6 +72,28 @@ type SourceRecord @node {
     url: String
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
+}
+type PublishedIn @relationshipProperties {
+    volume: String
+    issue: String
+    pages: String
+}
+type JournalIdentifier @node {
+    type: String!
+    value: String!
+    format: String
+}
+type Journal @node {
+    types: [String!]! @cypher(statement: """
+    RETURN labels(this) AS types
+    """,
+        columnName: "types")
+    uid: ID!
+    issn_l: String
+    publisher: String
+    titles: [String!] # Or [Literal!]! if you model it that way
+    identifiers: [JournalIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
+    published_documents: [Document!]! @relationship(type: "PUBLISHED_IN", direction: IN, properties: "PublishedIn")
 }
 
 `;
