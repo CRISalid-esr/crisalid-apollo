@@ -119,6 +119,7 @@ test("Fetch person data", async () => {
   if (body?.kind !== "single") {
     fail("Expected single result");
   }
+  console.log("RAW RESPONSE:", JSON.stringify(body, null, 2));
   const result = body.singleResult;
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2));
