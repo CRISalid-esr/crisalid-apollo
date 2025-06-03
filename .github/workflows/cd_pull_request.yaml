@@ -11,6 +11,19 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
 
+    services:
+      neo4j:
+        image: neo4j:latest
+        env:
+          NEO4J_AUTH: none
+          NEO4JLABS_PLUGINS: '["apoc"]'
+          NEO4J_apoc_export_file_enabled: 'true'
+          NEO4J_apoc_import_file_enabled: 'true'
+          NEO4J_apoc_import_file_use__neo4j__config: 'true'
+        ports:
+          - 7688:7687
+        options: --health-cmd "neo4j-admin server status" --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
