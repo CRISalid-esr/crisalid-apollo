@@ -66,12 +66,19 @@ type Document @node {
     has_subjects: [Concept!]! @relationship(type: "HAS_SUBJECT", direction: OUT)
     publishedIn: [Journal!]! @relationship(type: "PUBLISHED_IN", direction: OUT, properties: "PublishedIn")
 }
+enum HalSubmitType {
+    file
+    notice
+    annex
+}
 type SourceRecord @node {
     uid: ID!
     harvester: String!
     url: String
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
+    hal_collection_codes: [String!] 
+    hal_submit_type: HalSubmitType  
 }
 type PublishedIn @relationshipProperties {
     volume: String
