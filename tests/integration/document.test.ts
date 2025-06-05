@@ -5,6 +5,8 @@ type SourceRecord = {
   url: string;
   harvester: string;
   titles: { language: string; value: string }[];
+  hal_collection_codes?: string[] | null;
+  hal_submit_type?: "file" | "notice" | "annex" | null;
 };
 type Document = {
   uid: string;
@@ -91,6 +93,8 @@ test("Fetch TextualDocument with source records", async () => {
                       uid
                       url
                       harvester
+                      hal_collection_codes
+                      hal_submit_type
                       titles {
                           language
                           value
@@ -164,15 +168,22 @@ test("Fetch TextualDocument with source records", async () => {
     format: "Print",
   });
   expect(document?.recorded_by).toBeDefined();
-  expect(document?.recorded_by).toHaveLength(1);
-  const recordedBy = document?.recorded_by[0];
-  expect(recordedBy?.uid).toEqual("scanr-doi10.3847/1538-4357/ad0cc0");
-  expect(recordedBy?.url).toEqual(
+  expect(document?.recorded_by).toHaveLength(2);
+
+  const scanrRecord = document?.recorded_by.find(
+    (r) => r.uid === "scanr-doi10.3847/1538-4357/ad0cc0",
+  );
+  expect(scanrRecord?.harvester).toBe("ScanR");
+  expect(scanrRecord?.hal_collection_codes).toBeNull();
+  expect(scanrRecord?.hal_submit_type).toBeNull();
+
+  expect(scanrRecord?.uid).toEqual("scanr-doi10.3847/1538-4357/ad0cc0");
+  expect(scanrRecord?.url).toEqual(
     "https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0",
   );
-  expect(recordedBy?.harvester).toEqual("ScanR");
-  expect(recordedBy?.titles).toHaveLength(2);
-  const recordedByTitles = recordedBy?.titles;
+  expect(scanrRecord?.harvester).toEqual("ScanR");
+  expect(scanrRecord?.titles).toHaveLength(2);
+  const recordedByTitles = scanrRecord?.titles;
   expect(recordedByTitles).toContainEqual({
     language: "en",
     value:
@@ -184,6 +195,14 @@ test("Fetch TextualDocument with source records", async () => {
       "Nous ne sommes que de la poussière dans le WIM : contraintes sur " +
       "les propriétés de la poussière dans le milieu ionisé chaud de la Voie Lactée",
   });
+
+  const halRecord = document?.recorded_by.find(
+    (r) => r.uid === "hal-hal-04234567",
+  );
+  expect(halRecord?.harvester).toBe("HAL");
+  expect(halRecord?.hal_collection_codes).toEqual(["astronomy", "cosmology"]);
+  expect(halRecord?.hal_submit_type).toBe("file");
+
   expect(document?.has_subjects).toHaveLength(3);
   const subjects = document?.has_subjects;
   expect(subjects).toEqual(

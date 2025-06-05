@@ -100,22 +100,33 @@ CREATE (si:SourceIssue {
   source_identifier: 'the_astrophysical_journal-ScanR'
 })
 
-CREATE (s:SourceRecord {
+CREATE (s1:SourceRecord {
   harvester:         'ScanR',
   url: 'https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0',
   uid:               'scanr-doi10.3847/1538-4357/ad0cc0',
   source_identifier: 'doi10.3847/1538-4357/ad0cc0'
 })
 
-MERGE (s)-[:HAS_TITLE]->(t1)
-MERGE (s)-[:HAS_TITLE]->(t2)
-MERGE (s)-[:HAS_SUBJECT]->(c1)
-MERGE (s)-[:HAS_SUBJECT]->(c2)
-MERGE (s)-[:HAS_SUBJECT]->(c3)
-MERGE (s)-[:HAS_IDENTIFIER]->(pi1)
-MERGE (s)-[:PUBLISHED_IN]->(si)
+MERGE (s1)-[:HAS_TITLE]->(t1)
+MERGE (s1)-[:HAS_TITLE]->(t2)
+MERGE (s1)-[:HAS_SUBJECT]->(c1)
+MERGE (s1)-[:HAS_SUBJECT]->(c2)
+MERGE (s1)-[:HAS_SUBJECT]->(c3)
+MERGE (s1)-[:HAS_IDENTIFIER]->(pi1)
+MERGE (s1)-[:PUBLISHED_IN]->(si)
 MERGE (si)-[:ISSUED_IN]->(j1)
-MERGE (s)-[:HARVESTED_FOR]->(p)
+MERGE (s1)-[:HARVESTED_FOR]->(p)
+
+
+CREATE (s2:SourceRecord {
+  harvester:         'HAL',
+  url: 'https://hal.science/hal-04234567',
+  uid:               'hal-hal-04234567',
+  source_identifier: 'hal-04234567',
+  hal_collection_codes: ['astronomy', 'cosmology'],
+  hal_submit_type: 'file'
+})
+MERGE (s2)-[:HARVESTED_FOR]->(p)
 
 CREATE (doc:Document {uid: 'doc1',
                              document_type: 'JournalArticle',
@@ -131,7 +142,8 @@ CREATE (doc)-[:HAS_TITLE]->(title2)
 CREATE (doc)-[:HAS_SUBJECT]->(c1)
 CREATE (doc)-[:HAS_SUBJECT]->(c2)
 CREATE (doc)-[:HAS_SUBJECT]->(c3)
-CREATE (doc)-[:RECORDED_BY]->(s)
+CREATE (doc)-[:RECORDED_BY]->(s1)
+CREATE (doc)-[:RECORDED_BY]->(s2)
 
 CREATE (j:Journal {uid: 'journal-0004-637X', issn_l: '0004-637X', publisher: 'American Astronomical Society', titles: ['The Astrophysical Journal']})
 
@@ -139,4 +151,4 @@ MERGE (j)-[:HAS_IDENTIFIER]->(ji1)
 MERGE (j)-[:HAS_IDENTIFIER]->(ji2)
 MERGE (j)-[:HAS_IDENTIFIER]->(ji3)
 
-CREATE (doc)-[:PUBLISHED_IN {volume: "823", issue: "1", pages: "1–20"}]->(j)
+CREATE (doc)-[:PUBLISHED_IN {volume: '823', issue: '1', pages: '1–20'}]->(j)
