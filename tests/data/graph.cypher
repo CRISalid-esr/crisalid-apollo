@@ -100,7 +100,36 @@ CREATE (si:SourceIssue {
   source_identifier: 'the_astrophysical_journal-ScanR'
 })
 
+MERGE (si)-[:ISSUED_BY]->(j1)
+
+CREATE (sp1:SourcePerson{
+  uid:'hal-123456',
+  name:'Marie Dupuis',
+  source:'hal',
+  source_identifier:'123456'
+})
+
+CREATE (sc1:SourceContribution {
+  role:'AUTHOR'
+})
+
+CREATE (sp2:SourcePerson{
+  uid:'hal-987654',
+  name:'Laurent Dupond',
+  source:'hal',
+  source_identifier:'987654'
+})
+
+CREATE (sc2:SourceContribution {
+  role:'THESIS-DIRECTOR'
+})
+
+MERGE (sc1)-[:CONTRIBUTOR]->(sp1)
+MERGE (sc2)-[:CONTRIBUTOR]->(sp2)
+
 CREATE (s1:SourceRecord {
+  issued : '2012-09-19T00:00:00Z',
+  document_types : ['Book','Document'],
   harvester:         'ScanR',
   url: 'https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0',
   uid:               'scanr-doi10.3847/1538-4357/ad0cc0',
@@ -114,8 +143,9 @@ MERGE (s1)-[:HAS_SUBJECT]->(c2)
 MERGE (s1)-[:HAS_SUBJECT]->(c3)
 MERGE (s1)-[:HAS_IDENTIFIER]->(pi1)
 MERGE (s1)-[:PUBLISHED_IN]->(si)
-MERGE (si)-[:ISSUED_IN]->(j1)
 MERGE (s1)-[:HARVESTED_FOR]->(p)
+MERGE (s1)-[:HAS_CONTRIBUTION]->(sc1)
+MERGE (s1)-[:HAS_CONTRIBUTION]->(sc2)
 
 
 CREATE (s2:SourceRecord {

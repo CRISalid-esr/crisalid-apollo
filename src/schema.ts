@@ -82,7 +82,7 @@ type SourcePerson @node {
 
 type SourceContribution @node {
     role: String!
-    contributor: [SourcePerson!]! @relationship(type: "CONTRIBUTOR", direction: OUT)
+    contributor: SourcePerson! @relationship(type: "CONTRIBUTOR", direction: OUT)
 }
 
 type SourceJournal @node {
@@ -90,7 +90,8 @@ type SourceJournal @node {
     source : String!
     source_identifier: String!
     titles: [String]
-    publisher: String    
+    publisher: String
+    identifiers: [JournalIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
 }
 
 type SourceIssue @node {
