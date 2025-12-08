@@ -7,6 +7,7 @@ type AgentIdentifier @node {
 type Organisation @node {
     uid: ID!
     acronym: String
+    signature: String
     names: [Literal!]! @relationship(type: "HAS_NAME", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     types: [String!]! @cypher(statement: """
@@ -71,12 +72,44 @@ enum HalSubmitType {
     notice
     annex
 }
+
+type SourcePerson @node {
+    uid: ID!
+    name: String!
+    source: String!
+    source_identifier: String!
+}
+
+type SourceContribution @node {
+    role: String!
+    contributor: SourcePerson! @relationship(type: "CONTRIBUTOR", direction: OUT)
+}
+
+type SourceJournal @node {
+    uid: ID!
+    source : String!
+    source_identifier: String!
+    titles: [String]
+    publisher: String
+    identifiers: [JournalIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
+}
+
+type SourceIssue @node {
+    issued_by: SourceJournal @relationship(type: "ISSUED_BY", direction: OUT)
+    source: String!
+    source_identifier: String!
+}
+
 type SourceRecord @node {
     uid: ID!
     harvester: String!
     url: String
+    issued:DateTime
+    published_in: SourceIssue @relationship(type: "PUBLISHED_IN", direction: OUT)
+    document_types: [String]
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
+    has_contributions: [SourceContribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
     hal_collection_codes: [String!] 
     hal_submit_type: HalSubmitType  
 }
