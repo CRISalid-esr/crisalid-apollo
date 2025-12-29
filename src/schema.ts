@@ -38,11 +38,35 @@ type Membership @relationshipProperties {
     end_date: DateTime
     position_code: String
 }
+type AuthorityOrganization @node {
+    uid: ID!
+    display_names: [String!]!
 
+    # Computed union of direct identifiers + state identifiers, deduped (type,value)
+    identifiers: [AgentIdentifier!]!
+    @cypher(
+        statement: """
+        // direct ids
+        OPTIONAL MATCH (this)-[:HAS_IDENTIFIER]->(root_ids:AgentIdentifier)
+
+        // ids via states
+        OPTIONAL MATCH (this)-[:HAS_STATES]->(:AuthorityOrganizationState)-[:HAS_IDENTIFIER]->(state_ids:AgentIdentifier)
+
+        WITH collect(root_ids) + collect(state_ids) AS ids
+        UNWIND ids AS id
+        WITH DISTINCT id
+        WHERE id IS NOT NULL
+
+        RETURN id
+        """
+        columnName: "id"
+    )
+}
 type Contribution @node {
     uid: ID!
     roles: [String!]!
     contributor: [Person!]! @relationship(type: "HAS_CONTRIBUTION", direction: IN)
+    affiliations: [AuthorityOrganization!]! @relationship(type: "HAS_AFFILIATION_STATEMENT", direction: OUT)
 }
 type Literal @node {
     language: String
@@ -110,8 +134,8 @@ type SourceRecord @node {
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
     has_contributions: [SourceContribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
-    hal_collection_codes: [String!] 
-    hal_submit_type: HalSubmitType  
+    hal_collection_codes: [String!]
+    hal_submit_type: HalSubmitType
 }
 type PublishedIn @relationshipProperties {
     volume: String
