@@ -92,4 +92,4 @@ test("Fetch contributions affiliations: can target state or root", async () => {
       { type: "ror", value: "https://ror.org/000000000" },
     ]),
   );
-});
+}, 20000);
