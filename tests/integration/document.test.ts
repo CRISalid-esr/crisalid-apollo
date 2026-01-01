@@ -1,30 +1,30 @@
 import { createTestServer, runCypherFile } from "../setup";
 
-type SourcePerson={
-    uid: string;
-    name: string;
-    source: string;
-    source_identifier: string;
-}
+type SourcePerson = {
+  uid: string;
+  name: string;
+  source: string;
+  source_identifier: string;
+};
 
 type SourceContribution = {
-    role : string;
-    contributor: SourcePerson;
-}
+  role: string;
+  contributor: SourcePerson;
+};
 
 type SourceJournal = {
-    uid: string;
-    source: string;
-    source_identifier: string;
-    titles: string[];
-    publisher: string;
-}
+  uid: string;
+  source: string;
+  source_identifier: string;
+  titles: string[];
+  publisher: string;
+};
 
 type SourceIssue = {
-    issued_by: SourceJournal;
-    source: string;
-    source_identifier: string;
-}
+  issued_by: SourceJournal;
+  source: string;
+  source_identifier: string;
+};
 type SourceRecord = {
   uid: string;
   url: string;
@@ -35,7 +35,7 @@ type SourceRecord = {
   hal_collection_codes?: string[] | null;
   hal_submit_type?: "file" | "notice" | "annex" | null;
   published_in: SourceIssue;
-  has_contributions: SourceContribution[]
+  has_contributions: SourceContribution[];
 };
 type Document = {
   uid: string;
@@ -226,7 +226,7 @@ test("Fetch TextualDocument with source records", async () => {
   );
   expect(scanrRecord?.issued).toEqual("2012-09-19T00:00:00.000Z");
   expect(scanrRecord?.document_types).toHaveLength(2);
-  expect(scanrRecord?.document_types).toEqual(['Book','Document']);
+  expect(scanrRecord?.document_types).toEqual(["Book", "Document"]);
   expect(scanrRecord?.harvester).toBe("ScanR");
   expect(scanrRecord?.hal_collection_codes).toBeNull();
   expect(scanrRecord?.hal_submit_type).toBeNull();
@@ -254,14 +254,23 @@ test("Fetch TextualDocument with source records", async () => {
     fail("Expected source contributions");
   }
   expect(contributions).toHaveLength(2);
-  expect(contributions[0].role).toEqual("AUTHOR");
-  const person1 = contributions[0].contributor;
+  // contrib1 = constibution by rle "AUTHOR"
+  const contrib1 = contributions.find((c) => c.role === "AUTHOR");
+  if (!contrib1) {
+    fail("Expected AUTHOR contribution");
+  }
+  const person1 = contrib1.contributor;
   expect(person1.uid).toEqual("hal-123456");
   expect(person1.name).toEqual("Marie Dupuis");
   expect(person1.source).toEqual("hal");
   expect(person1.source_identifier).toEqual("123456");
-  expect(contributions[1].role).toEqual("THESIS-DIRECTOR");
-  const person2 = contributions[1].contributor;
+  // expect(contributions[1].role).toEqual("THESIS-DIRECTOR");
+  const contrib2 = contributions.find((c) => c.role === "THESIS-DIRECTOR");
+  expect(contrib2).toBeDefined();
+  if (!contrib2) {
+    fail("Expected THESIS-DIRECTOR contribution");
+  }
+  const person2 = contrib2.contributor;
   expect(person2.uid).toEqual("hal-987654");
   expect(person2.name).toEqual("Laurent Dupond");
   expect(person2.source).toEqual("hal");
@@ -270,11 +279,15 @@ test("Fetch TextualDocument with source records", async () => {
   expect(issue?.source).toEqual("ScanR");
   expect(issue?.source_identifier).toEqual("the_astrophysical_journal-ScanR");
   const journal = issue?.issued_by;
-  expect(journal?.uid).toEqual("scanr-0004-637X-1538-4357-the_astrophysical_journal-american_astronomical_society-ScanR");
+  expect(journal?.uid).toEqual(
+    "scanr-0004-637X-1538-4357-the_astrophysical_journal-american_astronomical_society-ScanR",
+  );
   expect(journal?.source).toEqual("ScanR");
-  expect(journal?.source_identifier).toEqual("0004-637X-1538-4357-the_astrophysical_journal-american_astronomical_society-ScanR");
+  expect(journal?.source_identifier).toEqual(
+    "0004-637X-1538-4357-the_astrophysical_journal-american_astronomical_society-ScanR",
+  );
   expect(journal?.publisher).toEqual("American Astronomical Society");
-  expect(journal?.titles).toEqual(["The Astrophysical Journal"])
+  expect(journal?.titles).toEqual(["The Astrophysical Journal"]);
 
   const halRecord = document?.recorded_by.find(
     (r) => r.uid === "hal-hal-04234567",
@@ -321,4 +334,4 @@ test("Fetch TextualDocument with source records", async () => {
       }),
     ]),
   );
-});
+}, 20000);

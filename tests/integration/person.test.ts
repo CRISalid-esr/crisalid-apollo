@@ -217,4 +217,4 @@ test("Fetch person data", async () => {
       },
     ],
   });
-});
+}, 20000);

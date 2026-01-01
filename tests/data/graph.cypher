@@ -182,3 +182,65 @@ MERGE (j)-[:HAS_IDENTIFIER]->(ji2)
 MERGE (j)-[:HAS_IDENTIFIER]->(ji3)
 
 CREATE (doc)-[:PUBLISHED_IN {volume: '823', issue: '1', pages: '1–20'}]->(j)
+
+// --- Authority organizations (Root + States) ---
+
+// Shared identifiers
+CREATE (ao_ror:AgentIdentifier {type: 'ror', value: 'https://ror.org/000000000'})
+CREATE (ao_idref:AgentIdentifier {type: 'idref', value: '123456789'})
+CREATE (ao_hal_1:AgentIdentifier {type: 'hal', value: '2001'})
+CREATE (ao_hal_2:AgentIdentifier {type: 'hal', value: '2002'})
+
+// Root
+CREATE (ao_root:AuthorityOrganization:AuthorityOrganizationRoot {
+  uid: 'ao-root-1',
+  display_names: ['Université Anonyme'],
+  source_organization_uids: ['hal-2001','hal-2002']
+})
+
+// Two states attached to root
+CREATE (ao_state_1:AuthorityOrganization:AuthorityOrganizationState {
+  uid: 'ao-state-1',
+  display_names: ['Université Anonyme'],
+  source_organization_uids: ['hal-2001']
+})
+
+CREATE (ao_state_2:AuthorityOrganization:AuthorityOrganizationState {
+  uid: 'ao-state-2',
+  display_names: ['Université Anonyme'],
+  source_organization_uids: ['hal-2002']
+})
+
+// Attach states to root
+MERGE (ao_root)-[:HAS_STATES]->(ao_state_1)
+MERGE (ao_root)-[:HAS_STATES]->(ao_state_2)
+
+// Identifiers:
+// - states each have their own hal + common idref
+// - root has only the common identifier(s) you want (here: ror)
+MERGE (ao_state_1)-[:HAS_IDENTIFIER]->(ao_hal_1)
+MERGE (ao_state_1)-[:HAS_IDENTIFIER]->(ao_idref)
+
+MERGE (ao_state_2)-[:HAS_IDENTIFIER]->(ao_hal_2)
+MERGE (ao_state_2)-[:HAS_IDENTIFIER]->(ao_idref)
+
+MERGE (ao_root)-[:HAS_IDENTIFIER]->(ao_ror)
+
+// --- Contributions (Document-side) ---
+CREATE (c_doc_1:Contribution {uid: 'contrib-1', roles: ['AUTHOR']})
+CREATE (c_doc_2:Contribution {uid: 'contrib-2', roles: ['AUTHOR']})
+
+// Link doc -> contributions
+MERGE (doc)-[:HAS_CONTRIBUTION]->(c_doc_1)
+MERGE (doc)-[:HAS_CONTRIBUTION]->(c_doc_2)
+
+// Link person -> contributions (because Contribution.contributor is IN from Person)
+MERGE (p)-[:HAS_CONTRIBUTION]->(c_doc_1)
+MERGE (p)-[:HAS_CONTRIBUTION]->(c_doc_2)
+
+// Affiliations:
+// - contribution 1 attached to a STATE
+// - contribution 2 attached to a ROOT
+MERGE (c_doc_1)-[:HAS_AFFILIATION_STATEMENT]->(ao_state_1)
+MERGE (c_doc_2)-[:HAS_AFFILIATION_STATEMENT]->(ao_root)
+
