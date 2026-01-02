@@ -158,11 +158,13 @@ CREATE (s2:SourceRecord {
 })
 MERGE (s2)-[:HARVESTED_FOR]->(p)
 
-CREATE (doc:Document {uid: 'doc1',
-                             document_type: 'JournalArticle',
-                             publication_date: '2012-09-19',
-                             publication_date_start: '2012-09-19T00:00:00Z',
-                             publication_date_end: '2012-09-19T23:59:59Z'})
+CREATE (doc:Document {uid:                    'doc1',
+                      document_type:          'JournalArticle',
+                      publication_date:       '2012-09-19',
+                      publication_date_start: '2012-09-19T00:00:00Z',
+                      publication_date_end:   '2012-09-19T23:59:59Z',
+                      upw_oa_status:          'gold',
+                      oa_status:              'green'})
 CREATE(title1:Literal {language: 'en',
                        value:    'All We Are Is Dust in the WIM: Constraints on Dust Properties in the Milky Way’s Warm Ionized Medium'})
 CREATE(title2:Literal {language: 'fr',
@@ -200,8 +202,8 @@ CREATE (ao_root:AuthorityOrganization:AuthorityOrganizationRoot {
 
 // Two states attached to root
 CREATE (ao_state_1:AuthorityOrganization:AuthorityOrganizationState {
-  uid: 'ao-state-1',
-  display_names: ['Université Anonyme'],
+  uid:                      'ao-state-1',
+  display_names:            ['Université Anonyme'],
   source_organization_uids: ['hal-2001']
 })
 
@@ -234,7 +236,7 @@ CREATE (c_doc_2:Contribution {uid: 'contrib-2', roles: ['AUTHOR']})
 MERGE (doc)-[:HAS_CONTRIBUTION]->(c_doc_1)
 MERGE (doc)-[:HAS_CONTRIBUTION]->(c_doc_2)
 
-// Link person -> contributions (because Contribution.contributor is IN from Person)
+// Link person -> contributions
 MERGE (p)-[:HAS_CONTRIBUTION]->(c_doc_1)
 MERGE (p)-[:HAS_CONTRIBUTION]->(c_doc_2)
 
