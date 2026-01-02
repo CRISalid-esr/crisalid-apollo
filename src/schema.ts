@@ -78,6 +78,20 @@ type Concept @node {
     pref_labels: [Literal!]! @relationship(type: "HAS_PREF_LABEL", direction: OUT)
     alt_labels: [Literal!]! @relationship(type: "HAS_ALT_LABEL", direction: OUT)
 }
+
+enum UPWOAStatus {
+    green
+    hybrid
+    diamond
+    closed
+    bronze
+    gold
+}
+enum OAStatus {
+    green
+    closed
+}
+
 type Document @node {
     uid: ID!
     document_type: String
@@ -90,6 +104,8 @@ type Document @node {
     has_contributions: [Contribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
     has_subjects: [Concept!]! @relationship(type: "HAS_SUBJECT", direction: OUT)
     publishedIn: [Journal!]! @relationship(type: "PUBLISHED_IN", direction: OUT, properties: "PublishedIn")
+    upw_oa_status: UPWOAStatus
+    oa_status: OAStatus
 }
 enum HalSubmitType {
     file
@@ -101,7 +117,7 @@ type SourcePerson @node {
     uid: ID!
     name: String!
     source: String!
-    source_identifier: String!
+    source_identifier: String
 }
 
 type SourceContribution @node {

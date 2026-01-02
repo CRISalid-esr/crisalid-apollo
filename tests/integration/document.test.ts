@@ -43,6 +43,15 @@ type Document = {
   publication_date: string;
   publication_date_start: string;
   publication_date_end: string;
+  upw_oa_status?:
+    | "green"
+    | "hybrid"
+    | "diamond"
+    | "closed"
+    | "bronze"
+    | "gold"
+    | null;
+  oa_status?: "green" | "closed" | null;
   titles: { language: string; value: string }[];
   publishedInConnection: {
     edges: {
@@ -83,6 +92,8 @@ test("Fetch TextualDocument with source records", async () => {
                     publication_date
                     publication_date_start
                     publication_date_end
+                    upw_oa_status
+                    oa_status
                     titles {
                       language
                       value
@@ -173,6 +184,8 @@ test("Fetch TextualDocument with source records", async () => {
   expect(document?.publication_date).toEqual("2012-09-19");
   expect(document?.publication_date_start).toEqual("2012-09-19T00:00:00.000Z");
   expect(document?.publication_date_end).toEqual("2012-09-19T23:59:59.000Z");
+  expect(document?.upw_oa_status).toEqual("gold");
+  expect(document?.oa_status).toEqual("green");
   expect(document?.titles).toHaveLength(2);
   const titles = document?.titles;
   expect(titles).toContainEqual({
