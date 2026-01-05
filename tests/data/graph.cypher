@@ -169,8 +169,14 @@ CREATE(title1:Literal {language: 'en',
                        value:    'All We Are Is Dust in the WIM: Constraints on Dust Properties in the Milky Way’s Warm Ionized Medium'})
 CREATE(title2:Literal {language: 'fr',
                        value:    'Nous ne sommes que de la poussière dans le WIM : contraintes sur les propriétés de la poussière dans le milieu ionisé chaud de la Voie Lactée'})
+CREATE(abstract1:TextLiteral {language: 'en',
+                              value:    'A detailed abstract of the document in English.'})
+CREATE(abstract2:TextLiteral {language: 'ul',
+                              value:    'A detailed abstract of the document in an undetermined language.'})
 CREATE (doc)-[:HAS_TITLE]->(title1)
 CREATE (doc)-[:HAS_TITLE]->(title2)
+CREATE (doc)-[:HAS_ABSTRACT]->(abstract1)
+CREATE (doc)-[:HAS_ABSTRACT]->(abstract2)
 CREATE (doc)-[:HAS_SUBJECT]->(c1)
 CREATE (doc)-[:HAS_SUBJECT]->(c2)
 CREATE (doc)-[:HAS_SUBJECT]->(c3)

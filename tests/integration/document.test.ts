@@ -53,6 +53,7 @@ type Document = {
     | null;
   oa_status?: "green" | "closed" | null;
   titles: { language: string; value: string }[];
+  abstracts: { language: string; value: string }[];
   publishedInConnection: {
     edges: {
       properties: {
@@ -97,6 +98,10 @@ test("Fetch TextualDocument with source records", async () => {
                     titles {
                       language
                       value
+                    }
+                    abstracts {
+                        language
+                        value
                     }
                     has_subjects {
                       uid
@@ -198,6 +203,16 @@ test("Fetch TextualDocument with source records", async () => {
     value:
       "Nous ne sommes que de la poussière dans le WIM : contraintes sur " +
       "les propriétés de la poussière dans le milieu ionisé chaud de la Voie Lactée",
+  });
+  const abstracts = document?.abstracts;
+  expect(abstracts).toHaveLength(2);
+  expect(abstracts).toContainEqual({
+    language: "en",
+    value: "A detailed abstract of the document in English.",
+  });
+  expect(abstracts).toContainEqual({
+    language: "ul",
+    value: "A detailed abstract of the document in an undetermined language.",
   });
   expect(document?.publishedInConnection.edges).toHaveLength(1);
   const publishedInEdge = document?.publishedInConnection.edges[0];
