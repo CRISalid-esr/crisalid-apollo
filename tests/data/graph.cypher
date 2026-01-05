@@ -27,13 +27,13 @@ MERGE (in)-[:HAS_NAME]->(inn)
 MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
-CREATE (c1pl1:Literal {value: 'Analyse des données'})
+CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 
 MERGE (c1)-[:HAS_PREF_LABEL]->(c1pl1)
 
 CREATE (c2:Concept {uid: 'http://www.idref.fr/027818055/id', uri: 'http://www.idref.fr/027818055/id'})
 CREATE (c2pl1:Literal {language: 'fr', value: 'Matière interstellaire'})
-CREATE (c2al1:Literal {value: 'Milieu interstellaire'})
+CREATE (c2al1:Literal {value: 'Milieu interstellaire', language: 'fr'})
 
 MERGE (c2)-[:HAS_PREF_LABEL]->(c2pl1)
 MERGE (c2)-[:HAS_ALT_LABEL]->(c2al1)
@@ -102,36 +102,36 @@ CREATE (si:SourceIssue {
 
 MERGE (si)-[:ISSUED_BY]->(j1)
 
-CREATE (sp1:SourcePerson{
-  uid:'hal-123456',
-  name:'Marie Dupuis',
-  source:'hal',
-  source_identifier:'123456'
+CREATE (sp1:SourcePerson {
+  uid:               'hal-123456',
+  name:              'Marie Dupuis',
+  source:            'hal',
+  source_identifier: '123456'
 })
 
 CREATE (sc1:SourceContribution {
-  role:'AUTHOR'
+  role: 'AUTHOR'
 })
 
-CREATE (sp2:SourcePerson{
-  uid:'hal-987654',
-  name:'Laurent Dupond',
-  source:'hal',
-  source_identifier:'987654'
+CREATE (sp2:SourcePerson {
+  uid:               'hal-987654',
+  name:              'Laurent Dupond',
+  source:            'hal',
+  source_identifier: '987654'
 })
 
 CREATE (sc2:SourceContribution {
-  role:'THESIS-DIRECTOR'
+  role: 'THESIS-DIRECTOR'
 })
 
 MERGE (sc1)-[:CONTRIBUTOR]->(sp1)
 MERGE (sc2)-[:CONTRIBUTOR]->(sp2)
 
 CREATE (s1:SourceRecord {
-  issued : '2012-09-19T00:00:00Z',
-  document_types : ['Book','Document'],
+  issued:            '2012-09-19T00:00:00Z',
+  document_types:    ['Book', 'Document'],
   harvester:         'ScanR',
-  url: 'https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0',
+  url:               'https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0',
   uid:               'scanr-doi10.3847/1538-4357/ad0cc0',
   source_identifier: 'doi10.3847/1538-4357/ad0cc0'
 })
@@ -149,12 +149,12 @@ MERGE (s1)-[:HAS_CONTRIBUTION]->(sc2)
 
 
 CREATE (s2:SourceRecord {
-  harvester:         'HAL',
-  url: 'https://hal.science/hal-04234567',
-  uid:               'hal-hal-04234567',
-  source_identifier: 'hal-04234567',
+  harvester:            'HAL',
+  url:                  'https://hal.science/hal-04234567',
+  uid:                  'hal-hal-04234567',
+  source_identifier:    'hal-04234567',
   hal_collection_codes: ['astronomy', 'cosmology'],
-  hal_submit_type: 'file'
+  hal_submit_type:      'file'
 })
 MERGE (s2)-[:HARVESTED_FOR]->(p)
 
@@ -183,7 +183,8 @@ CREATE (doc)-[:HAS_SUBJECT]->(c3)
 CREATE (doc)-[:RECORDED_BY]->(s1)
 CREATE (doc)-[:RECORDED_BY]->(s2)
 
-CREATE (j:Journal {uid: 'journal-0004-637X', issn_l: '0004-637X', publisher: 'American Astronomical Society', titles: ['The Astrophysical Journal']})
+CREATE(j:Journal {uid: 'journal-0004-637X', issn_l: '0004-637X', publisher: 'American Astronomical Society', titles: [
+  'The Astrophysical Journal']})
 
 MERGE (j)-[:HAS_IDENTIFIER]->(ji1)
 MERGE (j)-[:HAS_IDENTIFIER]->(ji2)
@@ -201,9 +202,9 @@ CREATE (ao_hal_2:AgentIdentifier {type: 'hal', value: '2002'})
 
 // Root
 CREATE (ao_root:AuthorityOrganization:AuthorityOrganizationRoot {
-  uid: 'ao-root-1',
-  display_names: ['Université Anonyme'],
-  source_organization_uids: ['hal-2001','hal-2002']
+  uid:                      'ao-root-1',
+  display_names:            ['Université Anonyme'],
+  source_organization_uids: ['hal-2001', 'hal-2002']
 })
 
 // Two states attached to root
@@ -214,8 +215,8 @@ CREATE (ao_state_1:AuthorityOrganization:AuthorityOrganizationState {
 })
 
 CREATE (ao_state_2:AuthorityOrganization:AuthorityOrganizationState {
-  uid: 'ao-state-2',
-  display_names: ['Université Anonyme'],
+  uid:                      'ao-state-2',
+  display_names:            ['Université Anonyme'],
   source_organization_uids: ['hal-2002']
 })
 

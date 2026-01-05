@@ -331,7 +331,7 @@ test("Fetch TextualDocument with source records", async () => {
       expect.objectContaining({
         uid: "http://www.idref.fr/02734004x/id",
         pref_labels: expect.arrayContaining([
-          { language: null, value: "Analyse des données" },
+          { language: "fr", value: "Analyse des données" },
         ]),
         alt_labels: expect.arrayContaining([]),
       }),
@@ -341,7 +341,7 @@ test("Fetch TextualDocument with source records", async () => {
           { language: "fr", value: "Matière interstellaire" },
         ]),
         alt_labels: expect.arrayContaining([
-          { language: null, value: "Milieu interstellaire" },
+          { language: "fr", value: "Milieu interstellaire" },
         ]),
       }),
     ]),
