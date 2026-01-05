@@ -69,8 +69,13 @@ type Contribution @node {
     affiliations: [AuthorityOrganization!]! @relationship(type: "HAS_AFFILIATION_STATEMENT", direction: OUT)
 }
 type Literal @node {
-    language: String
+    language: String!
     value: String!
+}
+type TextLiteral @node {
+    language: String!
+    value: String!
+    key: String!
 }
 type Concept @node {
     uid: ID!
@@ -99,7 +104,7 @@ type Document @node {
     publication_date_start: DateTime
     publication_date_end: DateTime
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
-    abstracts: [Literal!]! @relationship(type: "HAS_ABSTRACT", direction: OUT)
+    abstracts: [TextLiteral!]! @relationship(type: "HAS_ABSTRACT", direction: OUT)
     recorded_by: [SourceRecord!]! @relationship(type: "RECORDED_BY", direction: OUT)
     has_contributions: [Contribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
     has_subjects: [Concept!]! @relationship(type: "HAS_SUBJECT", direction: OUT)
