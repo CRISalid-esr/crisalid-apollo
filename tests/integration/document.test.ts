@@ -30,6 +30,7 @@ type SourceRecord = {
   url: string;
   document_types: string[];
   issued: string;
+  source_identifier: string;
   harvester: string;
   titles: { language: string; value: string }[];
   hal_collection_codes?: string[] | null;
@@ -139,6 +140,7 @@ test("Fetch TextualDocument with source records", async () => {
                       url
                       document_types
                       issued
+                      source_identifier
                       has_contributions {
                         role
                         contributor {
@@ -253,6 +255,7 @@ test("Fetch TextualDocument with source records", async () => {
     (r) => r.uid === "scanr-doi10.3847/1538-4357/ad0cc0",
   );
   expect(scanrRecord?.issued).toEqual("2012-09-19T00:00:00.000Z");
+  expect(scanrRecord?.source_identifier).toBe("doi10.3847/1538-4357/ad0cc0");
   expect(scanrRecord?.document_types).toHaveLength(2);
   expect(scanrRecord?.document_types).toEqual(["Book", "Document"]);
   expect(scanrRecord?.harvester).toBe("ScanR");
@@ -320,6 +323,7 @@ test("Fetch TextualDocument with source records", async () => {
   const halRecord = document?.recorded_by.find(
     (r) => r.uid === "hal-hal-04234567",
   );
+  expect(halRecord?.source_identifier).toBe("hal-04234567");
   expect(halRecord?.harvester).toBe("HAL");
   expect(halRecord?.hal_collection_codes).toEqual(["astronomy", "cosmology"]);
   expect(halRecord?.hal_submit_type).toBe("file");

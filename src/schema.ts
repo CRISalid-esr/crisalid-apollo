@@ -150,6 +150,7 @@ type SourceRecord @node {
     harvester: String!
     url: String
     issued:DateTime
+    source_identifier: String!
     published_in: SourceIssue @relationship(type: "PUBLISHED_IN", direction: OUT)
     document_types: [String]
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
