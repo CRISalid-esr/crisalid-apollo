@@ -25,18 +25,28 @@ type SourceIssue = {
   source: string;
   source_identifier: string;
 };
+
+type PublicationIdentifier = {
+    uid: string;
+    type: string;
+    value: string;
+}
+
 type SourceRecord = {
   uid: string;
   url: string;
   document_types: string[];
   issued: string;
+  source_identifier: string;
   harvester: string;
   titles: { language: string; value: string }[];
   hal_collection_codes?: string[] | null;
   hal_submit_type?: "file" | "notice" | "annex" | null;
   published_in: SourceIssue;
   has_contributions: SourceContribution[];
+  has_identifiers: PublicationIdentifier[];
 };
+
 type Document = {
   uid: string;
   document_type: string;
@@ -139,6 +149,7 @@ test("Fetch TextualDocument with source records", async () => {
                       url
                       document_types
                       issued
+                      source_identifier
                       has_contributions {
                         role
                         contributor {
@@ -147,6 +158,11 @@ test("Fetch TextualDocument with source records", async () => {
                             source
                             source_identifier
                         }
+                      }
+                      has_identifiers {
+                        uid
+                        type
+                        value
                       }
                       harvester
                       hal_collection_codes
@@ -253,6 +269,7 @@ test("Fetch TextualDocument with source records", async () => {
     (r) => r.uid === "scanr-doi10.3847/1538-4357/ad0cc0",
   );
   expect(scanrRecord?.issued).toEqual("2012-09-19T00:00:00.000Z");
+  expect(scanrRecord?.source_identifier).toBe("doi10.3847/1538-4357/ad0cc0");
   expect(scanrRecord?.document_types).toHaveLength(2);
   expect(scanrRecord?.document_types).toEqual(["Book", "Document"]);
   expect(scanrRecord?.harvester).toBe("ScanR");
@@ -264,6 +281,18 @@ test("Fetch TextualDocument with source records", async () => {
     "https://scanr.enseignementsup-recherche.gouv.fr/publications/10.3847/1538-4357/ad0cc0",
   );
   expect(scanrRecord?.harvester).toEqual("ScanR");
+  expect(scanrRecord?.has_identifiers).toHaveLength(2);
+  const scanRIdentifiers = scanrRecord?.has_identifiers;
+  expect(scanRIdentifiers).toContainEqual({
+      uid: "pi001",
+      type: "doi",
+      value: "10.3847/1538-4357/ad0cc0",
+  });
+  expect(scanRIdentifiers).toContainEqual({
+      uid: "pi002",
+      type: "uri",
+      value: null,
+  })
   expect(scanrRecord?.titles).toHaveLength(2);
   const recordedByTitles = scanrRecord?.titles;
   expect(recordedByTitles).toContainEqual({
@@ -320,10 +349,11 @@ test("Fetch TextualDocument with source records", async () => {
   const halRecord = document?.recorded_by.find(
     (r) => r.uid === "hal-hal-04234567",
   );
+  expect(halRecord?.source_identifier).toBe("hal-04234567");
   expect(halRecord?.harvester).toBe("HAL");
   expect(halRecord?.hal_collection_codes).toEqual(["astronomy", "cosmology"]);
   expect(halRecord?.hal_submit_type).toBe("file");
-
+  expect(halRecord?.has_identifiers).toHaveLength(0);
   expect(document?.has_subjects).toHaveLength(3);
   const subjects = document?.has_subjects;
   expect(subjects).toEqual(

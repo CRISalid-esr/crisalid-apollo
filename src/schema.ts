@@ -145,16 +145,24 @@ type SourceIssue @node {
     source_identifier: String!
 }
 
+type PublicationIdentifier @node {
+    uid: ID!
+    type: String!
+    value: String
+}
+
 type SourceRecord @node {
     uid: ID!
     harvester: String!
     url: String
     issued:DateTime
+    source_identifier: String!
     published_in: SourceIssue @relationship(type: "PUBLISHED_IN", direction: OUT)
     document_types: [String]
     titles: [Literal!]! @relationship(type: "HAS_TITLE", direction: OUT)
     harvested_for: [Person!]! @relationship(type: "HARVESTED_FOR", direction: OUT)
     has_contributions: [SourceContribution!]! @relationship(type: "HAS_CONTRIBUTION", direction: OUT)
+    has_identifiers: [PublicationIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     hal_collection_codes: [String!]
     hal_submit_type: HalSubmitType
 }
