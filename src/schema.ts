@@ -146,7 +146,6 @@ type SourceIssue @node {
 }
 
 type PublicationIdentifier @node {
-    uid: ID!
     type: String!
     value: String
 }
