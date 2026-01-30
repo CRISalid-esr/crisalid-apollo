@@ -51,8 +51,8 @@ MERGE (c3)-[:HAS_ALT_LABEL]->(c3al1)
 MERGE (c3)-[:HAS_ALT_LABEL]->(c3al2)
 
 
-CREATE (pi1:PublicationIdentifier {uid: 'pi001',type: 'doi', value: '10.3847/1538-4357/ad0cc0'})
-CREATE (pi2:PublicationIdentifier {uid: 'pi002',type: 'uri', value: null})
+CREATE (pi1:PublicationIdentifier {type: 'doi', value: '10.3847/1538-4357/ad0cc0'})
+CREATE (pi2:PublicationIdentifier {type: 'uri', value: null})
 
 CREATE (pn1:PersonName)
 CREATE (pn1fn:Literal {language: 'fr', value: 'Jeannette'})

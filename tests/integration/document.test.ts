@@ -27,7 +27,6 @@ type SourceIssue = {
 };
 
 type PublicationIdentifier = {
-    uid: string;
     type: string;
     value: string;
 }
@@ -160,7 +159,6 @@ test("Fetch TextualDocument with source records", async () => {
                         }
                       }
                       has_identifiers {
-                        uid
                         type
                         value
                       }
@@ -284,12 +282,10 @@ test("Fetch TextualDocument with source records", async () => {
   expect(scanrRecord?.has_identifiers).toHaveLength(2);
   const scanRIdentifiers = scanrRecord?.has_identifiers;
   expect(scanRIdentifiers).toContainEqual({
-      uid: "pi001",
       type: "doi",
       value: "10.3847/1538-4357/ad0cc0",
   });
   expect(scanRIdentifiers).toContainEqual({
-      uid: "pi002",
       type: "uri",
       value: null,
   })
