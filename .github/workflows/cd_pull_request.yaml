@@ -1,0 +1,60 @@
+name: Pull Request CI/CD
+
+on:
+  pull_request:
+    branches: [ '*' ]
+
+env:
+  NODE_VERSION: '22.9.0'
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: none
+          NEO4JLABS_PLUGINS: '["apoc"]'
+          NEO4J_apoc_export_file_enabled: 'true'
+          NEO4J_apoc_import_file_enabled: 'true'
+          NEO4J_apoc_import_file_use__neo4j__config: 'true'
+        ports:
+          - 7688:7687
+        options: --health-cmd "neo4j-admin server status" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Copy .env.test to .env
+        run: cp .env.test .env
+
+      - name: Run Jest tests
+        run: npm test
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run ESLint
+        run: npm run lint
