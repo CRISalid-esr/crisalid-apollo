@@ -14,7 +14,7 @@ RUN npm run build
 # Stage 2: production
 FROM node:24-alpine AS production
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+RUN apk add --no-cache netcat-openbsd
 
 WORKDIR /app
 
