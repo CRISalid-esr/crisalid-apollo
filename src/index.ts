@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import { expressMiddleware } from "@as-integrations/express4";
 import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 import { typeDefs } from "./schema";
