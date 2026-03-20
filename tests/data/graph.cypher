@@ -8,7 +8,7 @@ MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)
 MERGE (p)-[:HAS_IDENTIFIER]->(i3)
 
-CREATE (rs:Organisation:ResearchStructure {uid: 'local-123456', acronym: 'LRA'})
+CREATE (rs:Organisation:ResearchUnit {uid: 'local-123456', acronym: 'LRA'})
 CREATE (rsi1:AgentIdentifier {type: 'local', value: '123456'})
 CREATE (rsn:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique'})
 
