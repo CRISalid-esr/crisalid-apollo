@@ -164,7 +164,7 @@ test("Fetch person data", async () => {
   });
   expect(node.types).toHaveLength(2);
   expect(node.types).toContainEqual("Organisation");
-  expect(node.types).toContainEqual("ResearchStructure");
+  expect(node.types).toContainEqual("ResearchUnit");
   expect(node.uid).toEqual("local-123456");
   expect(person?.employmentsConnection.edges).toHaveLength(1);
   const employment = person?.employmentsConnection.edges[0];
