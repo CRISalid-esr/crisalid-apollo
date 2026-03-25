@@ -2,9 +2,15 @@ import { createTestServer, runCypherFile } from "../setup";
 
 type AgentIdentifier = { type: string; value: string };
 
+type Place = {
+    latitude: number;
+    longitude : number;
+}
+
 type AuthorityOrganization = {
   uid: string;
   display_names: string[];
+  places: Place[];
   identifiers: AgentIdentifier[];
 };
 
@@ -35,6 +41,10 @@ test("Fetch contributions affiliations: can target state or root", async () => {
           affiliations {
             uid
             display_names
+            places{
+              latitude,
+              longitude
+            }
             identifiers {
               type
               value
@@ -70,6 +80,8 @@ test("Fetch contributions affiliations: can target state or root", async () => {
   expect(c1!.affiliations).toHaveLength(1);
   expect(c1!.affiliations[0].uid).toBe("ao-state-1");
   expect(c1!.affiliations[0].display_names).toContain("Université Anonyme");
+  expect(c1!.affiliations[0].places).toHaveLength(1);
+  expect(c1!.affiliations[0].places[0]).toEqual({latitude:1.2344, longitude:44.33335})
 
   // identifiers on state: hal(2001) + idref(123456789)
   const ids1 = c1!.affiliations[0].identifiers;
@@ -84,6 +96,13 @@ test("Fetch contributions affiliations: can target state or root", async () => {
   expect(c2!.affiliations).toHaveLength(1);
   expect(c2!.affiliations[0].uid).toBe("ao-root-1");
   expect(c2!.affiliations[0].display_names).toContain("Université Anonyme");
+  expect(c2!.affiliations[0].places).toHaveLength(2);
+  expect(c2!.affiliations[0].places).toEqual(
+      expect.arrayContaining([
+          {latitude:1.2344, longitude:44.33335},
+          {latitude:12.34466, longitude:33.44335}
+      ])
+  )
 
   // identifiers on root: ror only (per cypher)
   const ids2 = c2!.affiliations[0].identifiers;
