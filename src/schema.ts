@@ -38,9 +38,14 @@ type Membership @relationshipProperties {
     end_date: DateTime
     position_code: String
 }
+type Place @node {
+    latitude: Float!
+    longitude: Float!
+}
 type AuthorityOrganization @node {
     uid: ID!
     display_names: [String!]!
+    places: [Place!]! @relationship(type: "HAS_POS", direction: OUT)
 
     # Computed union of direct identifiers + state identifiers, deduped (type,value)
     identifiers: [AgentIdentifier!]!

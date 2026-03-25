@@ -196,6 +196,10 @@ CREATE (doc)-[:PUBLISHED_IN {volume: '823', issue: '1', pages: '1–20'}]->(j)
 
 // --- Authority organizations (Root + States) ---
 
+//Places
+CREATE (place1:Place {latitude:1.2344, longitude:44.33335})
+CREATE (place2:Place {latitude:12.34466, longitude:33.44335})
+
 // Shared identifiers
 CREATE (ao_ror:AgentIdentifier {type: 'ror', value: 'https://ror.org/000000000'})
 CREATE (ao_idref:AgentIdentifier {type: 'idref', value: '123456789'})
@@ -221,6 +225,11 @@ CREATE (ao_state_2:AuthorityOrganization:AuthorityOrganizationState {
   display_names:            ['Université Anonyme'],
   source_organization_uids: ['hal-2002']
 })
+
+MERGE (ao_root)-[:HAS_POS]->(place1)
+MERGE (ao_root)-[:HAS_POS]->(place2)
+
+MERGE (ao_state_1)-[:HAS_POS]->(place1)
 
 // Attach states to root
 MERGE (ao_root)-[:HAS_STATES]->(ao_state_1)
