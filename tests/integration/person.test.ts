@@ -12,7 +12,7 @@ type Person = {
         end_date: string;
         position_code: string;
       };
-      node: Organisation;
+      node: OrganizationUnit;
     }[];
   };
   employmentsConnection: {
@@ -22,7 +22,7 @@ type Person = {
         end_date: string;
         position_code: string;
       };
-      node: Organisation;
+      node: OrganizationUnit;
     }[];
   };
 };
@@ -34,11 +34,13 @@ type Literal = {
   value: string;
   language: string;
 };
-type Organisation = {
+type OrganizationUnit = {
   uid: string;
-  acronym: string;
+  generic_type: string;
+  national_type: string | null;
   identifiers: { type: string; value: string }[];
-  names: Literal[];
+  long_labels: Literal[];
+  short_labels: Literal[];
   types: string[];
 };
 type PeopleResponse = {
@@ -65,12 +67,17 @@ test("Fetch person data", async () => {
                                 position_code
                               }
                               node {
-                                acronym
+                                generic_type
+                                national_type
                                 identifiers {
                                   type
                                   value
                                 }
-                                names {
+                                long_labels {
+                                  language
+                                  value
+                                }
+                                short_labels {
                                   language
                                   value
                                 }
@@ -87,12 +94,17 @@ test("Fetch person data", async () => {
                                 position_code
                               }
                               node {
-                                acronym
+                                generic_type
+                                national_type
                                 identifiers {
                                   type
                                   value
                                 }
-                                names {
+                                long_labels {
+                                  language
+                                  value
+                                }
+                                short_labels {
                                   language
                                   value
                                 }
@@ -151,19 +163,26 @@ test("Fetch person data", async () => {
   expect(membership.properties.end_date).toBeNull();
   expect(membership.properties.position_code).toBeNull();
   const node = membership.node;
-  expect(node.acronym).toEqual("LRA");
+  expect(node.generic_type).toEqual("unit");
+  expect(node.national_type).toEqual("UMR");
   expect(node.identifiers).toHaveLength(1);
   expect(node.identifiers).toContainEqual({
     type: "local",
     value: "123456",
   });
-  expect(node.names).toHaveLength(1);
-  expect(node.names).toContainEqual({
+  expect(node.long_labels).toHaveLength(1);
+  expect(node.long_labels).toContainEqual({
     language: "fr",
     value: "Laboratoire de recherche en astrophysique",
   });
-  expect(node.types).toHaveLength(2);
-  expect(node.types).toContainEqual("Organisation");
+  expect(node.short_labels).toHaveLength(1);
+  expect(node.short_labels).toContainEqual({
+    language: "fr",
+    value: "LRA",
+  });
+  expect(node.types).toHaveLength(3);
+  expect(node.types).toContainEqual("OrganizationUnit");
+  expect(node.types).toContainEqual("Unit");
   expect(node.types).toContainEqual("ResearchUnit");
   expect(node.uid).toEqual("local-123456");
   expect(person?.employmentsConnection.edges).toHaveLength(1);
@@ -172,21 +191,23 @@ test("Fetch person data", async () => {
   expect(employment.properties.end_date).toBeNull();
   expect(employment.properties.position_code).toEqual("PR");
   const employmentNode = employment.node;
-  expect(employmentNode.acronym).toBeNull();
+  expect(employmentNode.generic_type).toEqual("institution");
+  expect(employmentNode.national_type).toBeNull();
   expect(employmentNode.identifiers).toHaveLength(1);
   expect(employmentNode.identifiers).toContainEqual({
-    type: "UAI",
+    type: "uai",
     value: "02345",
   });
-  expect(employmentNode.names).toHaveLength(1);
-  expect(employmentNode.names).toContainEqual({
+  expect(employmentNode.long_labels).toHaveLength(1);
+  expect(employmentNode.long_labels).toContainEqual({
     language: "fr",
     value: "Université de Paris",
   });
+  expect(employmentNode.short_labels).toHaveLength(0);
   expect(employmentNode.types).toHaveLength(2);
-  expect(employmentNode.types).toContainEqual("Organisation");
+  expect(employmentNode.types).toContainEqual("OrganizationUnit");
   expect(employmentNode.types).toContainEqual("Institution");
-  expect(employmentNode.uid).toEqual("local-123456");
+  expect(employmentNode.uid).toEqual("uai-02345");
   expect(person?.names).toHaveLength(2);
   const names = person?.names;
   expect(names).toContainEqual({

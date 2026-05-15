@@ -8,21 +8,23 @@ MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)
 MERGE (p)-[:HAS_IDENTIFIER]->(i3)
 
-CREATE (rs:Organisation:ResearchUnit {uid: 'local-123456', acronym: 'LRA'})
+CREATE (rs:OrganizationUnit:Unit:ResearchUnit {uid: 'local-123456', generic_type: 'unit', national_type: 'UMR'})
 CREATE (rsi1:AgentIdentifier {type: 'local', value: '123456'})
-CREATE (rsn:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique'})
+CREATE (rsln1:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique', type: 'organization_long_label'})
+CREATE (rssn1:Literal {language: 'fr', value: 'LRA', type: 'organization_short_label'})
 
 MERGE (rs)-[:HAS_IDENTIFIER]->(rsi1)
-MERGE (rs)-[:HAS_NAME]->(rsn)
+MERGE (rs)-[:HAS_LONG_LABEL]->(rsln1)
+MERGE (rs)-[:HAS_SHORT_LABEL]->(rssn1)
 
 MERGE (p)-[:MEMBER_OF]->(rs)
 
-CREATE (in:Organisation:Institution {uid: 'local-123456'})
-CREATE (ini1:AgentIdentifier {type: 'UAI', value: '02345'})
-CREATE (inn:Literal {language: 'fr', value: 'Université de Paris'})
+CREATE (in:OrganizationUnit:Institution {uid: 'uai-02345', generic_type: 'institution'})
+CREATE (ini1:AgentIdentifier {type: 'uai', value: '02345'})
+CREATE (inn1:Literal {language: 'fr', value: 'Université de Paris', type: 'organization_long_label'})
 
 MERGE (in)-[:HAS_IDENTIFIER]->(ini1)
-MERGE (in)-[:HAS_NAME]->(inn)
+MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
 
 MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 
