@@ -18,6 +18,7 @@ type OrganizationUnit = {
   short_labels: Literal[];
   local_types: Literal[];
   descriptions: TextLiteral[];
+  identifiers: { type: string; value: string }[];
   types: string[];
 };
 

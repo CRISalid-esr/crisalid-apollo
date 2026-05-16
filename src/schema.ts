@@ -22,12 +22,12 @@ type OrganizationUnit @node {
 }
 type OrgMembership @relationshipProperties {
     position: String
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
 }
 type OrgInclusion @relationshipProperties {
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
 }
 type PersonName @node {
     first_names: [Literal!]! @relationship(type: "HAS_FIRST_NAME", direction: OUT)
@@ -43,13 +43,13 @@ type Person @node {
     external: Boolean
 }
 type Employment @relationshipProperties {
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
     position_code: String
 }
 type Membership @relationshipProperties {
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
     position_code: String
 }
 type Place @node {
