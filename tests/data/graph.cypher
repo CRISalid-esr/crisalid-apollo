@@ -147,6 +147,7 @@ MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc1)
 MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc2)
 
 MERGE (team)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
+MERGE (p)-[:MEMBER_OF]->(team)
 
 CREATE (axis:OrganizationUnit:UnitSubdivision {uid: 'local-AXIS-OBS-001', generic_type: 'unit_subdivision'})
 CREATE (axisln1:Literal {language: 'fr', value: "Axe astrophysique observationnelle", type: 'organization_long_label'})

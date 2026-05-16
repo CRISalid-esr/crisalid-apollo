@@ -157,7 +157,7 @@ test("Fetch person data", async () => {
     type: "local",
     value: "jdurand@univ-domain.edu",
   });
-  expect(person?.membershipsConnection.edges).toHaveLength(2);
+  expect(person?.membershipsConnection.edges).toHaveLength(3);
 
   const researchUnitMembership = person?.membershipsConnection.edges.find(
     (e) => e.node.uid === "local-123456"
@@ -192,6 +192,17 @@ test("Fetch person data", async () => {
   expect(deptMembership!.node.long_labels).toContainEqual({
     language: "fr",
     value: "Département de physique",
+  });
+
+  const teamMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-TEAM-ASTRO-001"
+  );
+  expect(teamMembership).toBeDefined();
+  expect(teamMembership!.node.generic_type).toEqual("team");
+  expect(teamMembership!.node.types).toContainEqual("Team");
+  expect(teamMembership!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Groupe d'astrophysique observationnelle",
   });
   expect(person?.employmentsConnection.edges).toHaveLength(1);
   const employment = person?.employmentsConnection.edges[0];
