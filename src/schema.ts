@@ -14,7 +14,7 @@ type OrganizationUnit @node {
     descriptions: [TextLiteral!]! @relationship(type: "HAS_DESCRIPTION", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     member_of: [OrganizationUnit!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "OrgMembership")
-    part_of: [OrganizationUnit!]! @relationship(type: "PART_OF", direction: OUT, properties: "Inclusion")
+    part_of: [OrganizationUnit!]! @relationship(type: "PART_OF", direction: OUT, properties: "OrgInclusion")
     types: [String!]! @cypher(statement: """
     RETURN labels(this) AS types
     """,
@@ -25,7 +25,7 @@ type OrgMembership @relationshipProperties {
     start_date: DateTime
     end_date: DateTime
 }
-type Inclusion @relationshipProperties {
+type OrgInclusion @relationshipProperties {
     start_date: DateTime
     end_date: DateTime
 }
