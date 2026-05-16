@@ -157,34 +157,42 @@ test("Fetch person data", async () => {
     type: "local",
     value: "jdurand@univ-domain.edu",
   });
-  expect(person?.membershipsConnection.edges).toHaveLength(1);
-  const membership = person?.membershipsConnection.edges[0];
-  expect(membership.properties.start_date).toBeNull();
-  expect(membership.properties.end_date).toBeNull();
-  expect(membership.properties.position_code).toBeNull();
-  const node = membership.node;
+  expect(person?.membershipsConnection.edges).toHaveLength(2);
+
+  const researchUnitMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-123456"
+  );
+  expect(researchUnitMembership).toBeDefined();
+  expect(researchUnitMembership!.properties.start_date).toBeNull();
+  expect(researchUnitMembership!.properties.end_date).toBeNull();
+  expect(researchUnitMembership!.properties.position_code).toBeNull();
+  const node = researchUnitMembership!.node;
   expect(node.generic_type).toEqual("unit");
   expect(node.national_type).toEqual("UMR");
   expect(node.identifiers).toHaveLength(1);
-  expect(node.identifiers).toContainEqual({
-    type: "local",
-    value: "123456",
-  });
+  expect(node.identifiers).toContainEqual({ type: "local", value: "123456" });
   expect(node.long_labels).toHaveLength(1);
   expect(node.long_labels).toContainEqual({
     language: "fr",
     value: "Laboratoire de recherche en astrophysique",
   });
   expect(node.short_labels).toHaveLength(1);
-  expect(node.short_labels).toContainEqual({
-    language: "fr",
-    value: "LRA",
-  });
+  expect(node.short_labels).toContainEqual({ language: "fr", value: "LRA" });
   expect(node.types).toHaveLength(3);
   expect(node.types).toContainEqual("OrganizationUnit");
   expect(node.types).toContainEqual("Unit");
   expect(node.types).toContainEqual("ResearchUnit");
-  expect(node.uid).toEqual("local-123456");
+
+  const deptMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-DEPT-PHY-001"
+  );
+  expect(deptMembership).toBeDefined();
+  expect(deptMembership!.node.generic_type).toEqual("institution_subdivision");
+  expect(deptMembership!.node.types).toContainEqual("InstitutionSubdivision");
+  expect(deptMembership!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Département de physique",
+  });
   expect(person?.employmentsConnection.edges).toHaveLength(1);
   const employment = person?.employmentsConnection.edges[0];
   expect(employment.properties.start_date).toBeNull();

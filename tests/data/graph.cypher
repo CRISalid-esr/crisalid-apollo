@@ -30,6 +30,22 @@ MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 
 MERGE (rs)-[:MEMBER_OF {position: 'main_supervision', start_date: date('2000-01-01')}]->(in)
 
+CREATE (dept:OrganizationUnit:InstitutionSubdivision {uid: 'local-DEPT-PHY-001', generic_type: 'institution_subdivision'})
+CREATE (deptln1:Literal {language: 'fr', value: 'Département de physique', type: 'organization_long_label'})
+CREATE (deptln2:Literal {language: 'en', value: 'Physics Department', type: 'organization_long_label'})
+CREATE (deptlt1:Literal {language: 'fr', value: 'Département', type: 'organization_local_type'})
+CREATE (deptlt2:Literal {language: 'en', value: 'Department', type: 'organization_local_type'})
+
+MERGE (dept)-[:HAS_LONG_LABEL]->(deptln1)
+MERGE (dept)-[:HAS_LONG_LABEL]->(deptln2)
+MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt1)
+MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt2)
+
+MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(dept)
+MERGE (rs)-[:MEMBER_OF {start_date: date('2000-01-01')}]->(dept)
+MERGE (p)-[:MEMBER_OF]->(dept)
+MERGE (dept)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
+
 CREATE (fac:OrganizationUnit:InstitutionSubdivision {uid: 'local-FAC-SCI-001', generic_type: 'institution_subdivision', national_type: 'FAC'})
 CREATE (facln1:Literal {language: 'fr', value: 'Faculté des sciences', type: 'organization_long_label'})
 CREATE (facln2:Literal {language: 'en', value: 'Science faculty', type: 'organization_long_label'})

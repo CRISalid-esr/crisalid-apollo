@@ -11,6 +11,7 @@ type OrganizationUnit = {
   national_type: string | null;
   long_labels: Literal[];
   short_labels: Literal[];
+  local_types: Literal[];
   types: string[];
 };
 
@@ -28,7 +29,9 @@ type PartOfEdge = {
     start_date: string | null;
     end_date: string | null;
   };
-  node: OrganizationUnit;
+  node: OrganizationUnit & {
+    part_ofConnection: { edges: PartOfEdge[] };
+  };
 };
 
 type OrganizationUnitWithRelationships = OrganizationUnit & {
@@ -40,7 +43,7 @@ type OrganizationUnitsResponse = {
   organizationUnits: OrganizationUnitWithRelationships[];
 };
 
-test("ResearchUnit is member_of Institution with position and start_date", async () => {
+test("ResearchUnit relationships: member_of and part_of", async () => {
   const server = await createTestServer();
   await runCypherFile("tests/data/graph.cypher");
 
@@ -52,6 +55,7 @@ test("ResearchUnit is member_of Institution with position and start_date", async
         national_type
         long_labels { language value }
         short_labels { language value }
+        local_types { language value }
         types
         member_ofConnection {
           edges {
@@ -63,7 +67,9 @@ test("ResearchUnit is member_of Institution with position and start_date", async
             node {
               uid
               generic_type
+              national_type
               long_labels { language value }
+              local_types { language value }
               types
             }
           }
@@ -79,6 +85,7 @@ test("ResearchUnit is member_of Institution with position and start_date", async
               generic_type
               national_type
               long_labels { language value }
+              local_types { language value }
               types
               part_ofConnection {
                 edges {
@@ -112,7 +119,6 @@ test("ResearchUnit is member_of Institution with position and start_date", async
   expect(result.errors).toBeUndefined();
 
   const data = result.data as OrganizationUnitsResponse;
-
   expect(data.organizationUnits).toHaveLength(1);
 
   const unit = data.organizationUnits[0];
@@ -123,46 +129,80 @@ test("ResearchUnit is member_of Institution with position and start_date", async
   expect(unit.types).toContain("Unit");
   expect(unit.types).toContain("ResearchUnit");
 
-  expect(unit.member_ofConnection.edges).toHaveLength(1);
-  const edge = unit.member_ofConnection.edges[0];
+  // MEMBER_OF: ResearchUnit -> Institution (main_supervision) + ResearchUnit -> Department
+  expect(unit.member_ofConnection.edges).toHaveLength(2);
 
-  expect(edge.properties.position).toBe("main_supervision");
-  expect(edge.properties.start_date).not.toBeNull();
-  expect(edge.properties.end_date).toBeNull();
+  const memberOfInstitution = unit.member_ofConnection.edges.find(
+    (e) => e.node.uid === "uai-02345"
+  );
+  expect(memberOfInstitution).toBeDefined();
+  expect(memberOfInstitution!.properties.position).toBe("main_supervision");
+  expect(memberOfInstitution!.properties.start_date).not.toBeNull();
+  expect(memberOfInstitution!.properties.end_date).toBeNull();
+  expect(memberOfInstitution!.node.generic_type).toBe("institution");
+  expect(memberOfInstitution!.node.types).toContain("Institution");
 
-  const institution = edge.node;
-  expect(institution.uid).toBe("uai-02345");
-  expect(institution.generic_type).toBe("institution");
-  expect(institution.types).toContain("OrganizationUnit");
-  expect(institution.types).toContain("Institution");
-  expect(institution.long_labels).toContainEqual({
+  const memberOfDept = unit.member_ofConnection.edges.find(
+    (e) => e.node.uid === "local-DEPT-PHY-001"
+  );
+  expect(memberOfDept).toBeDefined();
+  expect(memberOfDept!.properties.position).toBeNull();
+  expect(memberOfDept!.properties.start_date).not.toBeNull();
+  expect(memberOfDept!.properties.end_date).toBeNull();
+  expect(memberOfDept!.node.generic_type).toBe("institution_subdivision");
+  expect(memberOfDept!.node.types).toContain("InstitutionSubdivision");
+  expect(memberOfDept!.node.long_labels).toContainEqual({
     language: "fr",
-    value: "Université de Paris",
+    value: "Département de physique",
+  });
+  expect(memberOfDept!.node.long_labels).toContainEqual({
+    language: "en",
+    value: "Physics Department",
+  });
+  expect(memberOfDept!.node.local_types).toContainEqual({
+    language: "fr",
+    value: "Département",
+  });
+  expect(memberOfDept!.node.local_types).toContainEqual({
+    language: "en",
+    value: "Department",
   });
 
-  // PART_OF: ResearchUnit -> InstitutionSubdivision -> Institution
-  expect(unit.part_ofConnection.edges).toHaveLength(1);
-  const partOfEdge = unit.part_ofConnection.edges[0];
-  expect(partOfEdge.properties.start_date).not.toBeNull();
-  expect(partOfEdge.properties.end_date).toBeNull();
+  // PART_OF: ResearchUnit -> Faculty + ResearchUnit -> Department
+  expect(unit.part_ofConnection.edges).toHaveLength(2);
 
-  const fac = partOfEdge.node;
-  expect(fac.uid).toBe("local-FAC-SCI-001");
-  expect(fac.generic_type).toBe("institution_subdivision");
-  expect(fac.national_type).toBe("FAC");
-  expect(fac.types).toContain("OrganizationUnit");
-  expect(fac.types).toContain("InstitutionSubdivision");
-  expect(fac.long_labels).toContainEqual({ language: "fr", value: "Faculté des sciences" });
-  expect(fac.long_labels).toContainEqual({ language: "en", value: "Science faculty" });
+  const partOfFac = unit.part_ofConnection.edges.find(
+    (e) => e.node.uid === "local-FAC-SCI-001"
+  );
+  expect(partOfFac).toBeDefined();
+  expect(partOfFac!.properties.start_date).not.toBeNull();
+  expect(partOfFac!.properties.end_date).toBeNull();
+  expect(partOfFac!.node.generic_type).toBe("institution_subdivision");
+  expect(partOfFac!.node.national_type).toBe("FAC");
+  expect(partOfFac!.node.types).toContain("InstitutionSubdivision");
+  expect(partOfFac!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Faculté des sciences",
+  });
+  expect(partOfFac!.node.long_labels).toContainEqual({
+    language: "en",
+    value: "Science faculty",
+  });
+  expect(partOfFac!.node.part_ofConnection.edges).toHaveLength(1);
+  expect(partOfFac!.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
 
-  expect(fac.part_ofConnection.edges).toHaveLength(1);
-  const facPartOfEdge = fac.part_ofConnection.edges[0];
-  expect(facPartOfEdge.properties.start_date).not.toBeNull();
-  expect(facPartOfEdge.properties.end_date).toBeNull();
-
-  const facParent = facPartOfEdge.node;
-  expect(facParent.uid).toBe("uai-02345");
-  expect(facParent.generic_type).toBe("institution");
-  expect(facParent.types).toContain("OrganizationUnit");
-  expect(facParent.types).toContain("Institution");
+  const partOfDept = unit.part_ofConnection.edges.find(
+    (e) => e.node.uid === "local-DEPT-PHY-001"
+  );
+  expect(partOfDept).toBeDefined();
+  expect(partOfDept!.properties.start_date).not.toBeNull();
+  expect(partOfDept!.properties.end_date).toBeNull();
+  expect(partOfDept!.node.generic_type).toBe("institution_subdivision");
+  expect(partOfDept!.node.national_type).toBeNull();
+  expect(partOfDept!.node.local_types).toContainEqual({
+    language: "fr",
+    value: "Département",
+  });
+  expect(partOfDept!.node.part_ofConnection.edges).toHaveLength(1);
+  expect(partOfDept!.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
 }, 20000);
