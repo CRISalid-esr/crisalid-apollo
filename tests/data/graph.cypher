@@ -28,6 +28,8 @@ MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
 
 MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 
+MERGE (rs)-[:MEMBER_OF {position: 'main_supervision', start_date: date('2000-01-01')}]->(in)
+
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 
