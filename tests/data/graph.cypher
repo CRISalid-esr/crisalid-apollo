@@ -72,6 +72,30 @@ MERGE (fac)-[:HAS_LONG_LABEL]->(facln2)
 MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(fac)
 MERGE (fac)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
 
+CREATE (cnrs:OrganizationUnit:Institution {uid: 'uai-CNRS', generic_type: 'institution', national_type: 'EPST'})
+CREATE (cnrsln1:Literal {language: 'fr', value: 'Centre national de la recherche scientifique', type: 'organization_long_label'})
+CREATE (cnrssn1:Literal {language: 'fr', value: 'CNRS', type: 'organization_short_label'})
+CREATE (cnrsi1:AgentIdentifier {type: 'uai', value: '0757581P'})
+CREATE (cnrsi2:AgentIdentifier {type: 'ror', value: 'https://ror.org/02feahw73'})
+
+MERGE (cnrs)-[:HAS_LONG_LABEL]->(cnrsln1)
+MERGE (cnrs)-[:HAS_SHORT_LABEL]->(cnrssn1)
+MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi1)
+MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi2)
+
+MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2000-01-01')}]->(cnrs)
+
+CREATE (ena:OrganizationUnit:Institution {uid: 'uai-ENA-ASTRO', generic_type: 'institution', national_type: 'GE'})
+CREATE (enaln1:Literal {language: 'fr', value: "École nationale d'astrophysique", type: 'organization_long_label'})
+CREATE (enai1:AgentIdentifier {type: 'uai', value: '0123456A'})
+CREATE (enai2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0enastr1x'})
+
+MERGE (ena)-[:HAS_LONG_LABEL]->(enaln1)
+MERGE (ena)-[:HAS_IDENTIFIER]->(enai1)
+MERGE (ena)-[:HAS_IDENTIFIER]->(enai2)
+
+MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2005-01-01')}]->(ena)
+
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 

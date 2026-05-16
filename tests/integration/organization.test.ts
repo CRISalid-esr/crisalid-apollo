@@ -130,8 +130,8 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(unit.types).toContain("Unit");
   expect(unit.types).toContain("ResearchUnit");
 
-  // MEMBER_OF: ResearchUnit -> Institution (main_supervision) + ResearchUnit -> Department
-  expect(unit.member_ofConnection.edges).toHaveLength(2);
+  // MEMBER_OF: institution (main_supervision), department, CNRS (associated), ENA (associated)
+  expect(unit.member_ofConnection.edges).toHaveLength(4);
 
   const memberOfInstitution = unit.member_ofConnection.edges.find(
     (e) => e.node.uid === "uai-02345"
@@ -172,6 +172,36 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   });
   expect(memberOfDept!.node.identifiers).toContainEqual({ type: "local", value: "DEPT-PHY-001" });
   expect(memberOfDept!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0deptph1x" });
+
+  const memberOfCnrs = unit.member_ofConnection.edges.find(
+    (e) => e.node.uid === "uai-CNRS"
+  );
+  expect(memberOfCnrs).toBeDefined();
+  expect(memberOfCnrs!.properties.position).toBe("associated_supervision");
+  expect(memberOfCnrs!.properties.start_date).not.toBeNull();
+  expect(memberOfCnrs!.node.generic_type).toBe("institution");
+  expect(memberOfCnrs!.node.national_type).toBe("EPST");
+  expect(memberOfCnrs!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Centre national de la recherche scientifique",
+  });
+  expect(memberOfCnrs!.node.identifiers).toContainEqual({ type: "uai", value: "0757581P" });
+  expect(memberOfCnrs!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/02feahw73" });
+
+  const memberOfEna = unit.member_ofConnection.edges.find(
+    (e) => e.node.uid === "uai-ENA-ASTRO"
+  );
+  expect(memberOfEna).toBeDefined();
+  expect(memberOfEna!.properties.position).toBe("associated_supervision");
+  expect(memberOfEna!.properties.start_date).not.toBeNull();
+  expect(memberOfEna!.node.generic_type).toBe("institution");
+  expect(memberOfEna!.node.national_type).toBe("GE");
+  expect(memberOfEna!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "École nationale d'astrophysique",
+  });
+  expect(memberOfEna!.node.identifiers).toContainEqual({ type: "uai", value: "0123456A" });
+  expect(memberOfEna!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0enastr1x" });
 
   // PART_OF: ResearchUnit -> Faculty only
   expect(unit.part_ofConnection.edges).toHaveLength(1);
