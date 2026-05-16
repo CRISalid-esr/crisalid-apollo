@@ -168,41 +168,24 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
     value: "Department",
   });
 
-  // PART_OF: ResearchUnit -> Faculty + ResearchUnit -> Department
-  expect(unit.part_ofConnection.edges).toHaveLength(2);
+  // PART_OF: ResearchUnit -> Faculty only
+  expect(unit.part_ofConnection.edges).toHaveLength(1);
 
-  const partOfFac = unit.part_ofConnection.edges.find(
-    (e) => e.node.uid === "local-FAC-SCI-001"
-  );
-  expect(partOfFac).toBeDefined();
-  expect(partOfFac!.properties.start_date).not.toBeNull();
-  expect(partOfFac!.properties.end_date).toBeNull();
-  expect(partOfFac!.node.generic_type).toBe("institution_subdivision");
-  expect(partOfFac!.node.national_type).toBe("FAC");
-  expect(partOfFac!.node.types).toContain("InstitutionSubdivision");
-  expect(partOfFac!.node.long_labels).toContainEqual({
+  const partOfFac = unit.part_ofConnection.edges[0];
+  expect(partOfFac.node.uid).toBe("local-FAC-SCI-001");
+  expect(partOfFac.properties.start_date).not.toBeNull();
+  expect(partOfFac.properties.end_date).toBeNull();
+  expect(partOfFac.node.generic_type).toBe("institution_subdivision");
+  expect(partOfFac.node.national_type).toBe("FAC");
+  expect(partOfFac.node.types).toContain("InstitutionSubdivision");
+  expect(partOfFac.node.long_labels).toContainEqual({
     language: "fr",
     value: "Faculté des sciences",
   });
-  expect(partOfFac!.node.long_labels).toContainEqual({
+  expect(partOfFac.node.long_labels).toContainEqual({
     language: "en",
     value: "Science faculty",
   });
-  expect(partOfFac!.node.part_ofConnection.edges).toHaveLength(1);
-  expect(partOfFac!.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
-
-  const partOfDept = unit.part_ofConnection.edges.find(
-    (e) => e.node.uid === "local-DEPT-PHY-001"
-  );
-  expect(partOfDept).toBeDefined();
-  expect(partOfDept!.properties.start_date).not.toBeNull();
-  expect(partOfDept!.properties.end_date).toBeNull();
-  expect(partOfDept!.node.generic_type).toBe("institution_subdivision");
-  expect(partOfDept!.node.national_type).toBeNull();
-  expect(partOfDept!.node.local_types).toContainEqual({
-    language: "fr",
-    value: "Département",
-  });
-  expect(partOfDept!.node.part_ofConnection.edges).toHaveLength(1);
-  expect(partOfDept!.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
+  expect(partOfFac.node.part_ofConnection.edges).toHaveLength(1);
+  expect(partOfFac.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
 }, 20000);

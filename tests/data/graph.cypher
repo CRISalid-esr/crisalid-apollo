@@ -41,7 +41,6 @@ MERGE (dept)-[:HAS_LONG_LABEL]->(deptln2)
 MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt1)
 MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt2)
 
-MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(dept)
 MERGE (rs)-[:MEMBER_OF {start_date: date('2000-01-01')}]->(dept)
 MERGE (p)-[:MEMBER_OF]->(dept)
 MERGE (dept)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
