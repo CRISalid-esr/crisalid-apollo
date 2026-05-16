@@ -314,3 +314,76 @@ test("Institution is member_of EPE institution", async () => {
   expect(epe.identifiers).toContainEqual({ type: "uai", value: "07890" });
   expect(epe.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0parso01x" });
 }, 20000);
+
+test("Team is part_of ResearchUnit with local type and description", async () => {
+  const server = await createTestServer();
+  await runCypherFile("tests/data/graph.cypher");
+
+  const QUERY = `
+    query {
+      organizationUnits(where: { generic_type: "team" }) {
+        uid
+        generic_type
+        national_type
+        long_labels { language value }
+        local_types { language value }
+        descriptions { language value }
+        identifiers { type value }
+        types
+        part_ofConnection {
+          edges {
+            properties {
+              start_date
+              end_date
+            }
+            node {
+              uid
+              generic_type
+              types
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const res = await server.executeOperation({ query: QUERY });
+  const body = res.body;
+  if (body?.kind !== "single") fail("Expected single result");
+
+  const result = body.singleResult;
+  if (result.errors) {
+    console.error(JSON.stringify(result.errors, null, 2));
+  }
+  expect(result.errors).toBeUndefined();
+
+  const data = result.data as OrganizationUnitsResponse;
+  expect(data.organizationUnits).toHaveLength(1);
+
+  const team = data.organizationUnits[0];
+  expect(team.uid).toBe("local-TEAM-ASTRO-001");
+  expect(team.generic_type).toBe("team");
+  expect(team.national_type).toBe("TEAM");
+  expect(team.types).toContain("OrganizationUnit");
+  expect(team.types).toContain("Team");
+
+  expect(team.long_labels).toContainEqual({ language: "fr", value: "Groupe d'astrophysique observationnelle" });
+  expect(team.long_labels).toContainEqual({ language: "en", value: "Observational astrophysics group" });
+
+  expect(team.local_types).toContainEqual({ language: "fr", value: "Groupe" });
+  expect(team.local_types).toContainEqual({ language: "en", value: "Group" });
+
+  expect(team.identifiers).toHaveLength(0);
+
+  expect(team.descriptions).toHaveLength(2);
+  expect(team.descriptions).toContainEqual(expect.objectContaining({ language: "en" }));
+  expect(team.descriptions).toContainEqual(expect.objectContaining({ language: "fr" }));
+
+  expect(team.part_ofConnection.edges).toHaveLength(1);
+  const edge = team.part_ofConnection.edges[0];
+  expect(edge.properties.start_date).not.toBeNull();
+  expect(edge.properties.end_date).toBeNull();
+  expect(edge.node.uid).toBe("local-123456");
+  expect(edge.node.generic_type).toBe("unit");
+  expect(edge.node.types).toContain("ResearchUnit");
+}, 20000);

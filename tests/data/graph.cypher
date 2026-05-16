@@ -131,6 +131,23 @@ MERGE (ena)-[:HAS_DESCRIPTION]->(enadesc2)
 
 MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2005-01-01')}]->(ena)
 
+CREATE (team:OrganizationUnit:Team {uid: 'local-TEAM-ASTRO-001', generic_type: 'team', national_type: 'TEAM'})
+CREATE (teamln1:Literal {language: 'fr', value: "Groupe d'astrophysique observationnelle", type: 'organization_long_label'})
+CREATE (teamln2:Literal {language: 'en', value: 'Observational astrophysics group', type: 'organization_long_label'})
+CREATE (teamlt1:Literal {language: 'fr', value: 'Groupe', type: 'organization_local_type'})
+CREATE (teamlt2:Literal {language: 'en', value: 'Group', type: 'organization_local_type'})
+CREATE (teamdesc1:TextLiteral {language: 'en', key: 'desc-team-en', value: 'Research team in observational astrophysics, part of the LRA research unit.'})
+CREATE (teamdesc2:TextLiteral {language: 'fr', key: 'desc-team-fr', value: "Équipe de recherche en astrophysique observationnelle, composante de l'unité LRA."})
+
+MERGE (team)-[:HAS_LONG_LABEL]->(teamln1)
+MERGE (team)-[:HAS_LONG_LABEL]->(teamln2)
+MERGE (team)-[:HAS_LOCAL_TYPE]->(teamlt1)
+MERGE (team)-[:HAS_LOCAL_TYPE]->(teamlt2)
+MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc1)
+MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc2)
+
+MERGE (team)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
+
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 
