@@ -5,6 +5,11 @@ type Literal = {
   language: string;
 };
 
+type TextLiteral = {
+  value: string;
+  language: string;
+};
+
 type OrganizationUnit = {
   uid: string;
   generic_type: string;
@@ -12,6 +17,7 @@ type OrganizationUnit = {
   long_labels: Literal[];
   short_labels: Literal[];
   local_types: Literal[];
+  descriptions: TextLiteral[];
   types: string[];
 };
 
@@ -56,6 +62,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
         long_labels { language value }
         short_labels { language value }
         local_types { language value }
+        descriptions { language value }
         types
         member_ofConnection {
           edges {
@@ -129,6 +136,9 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(unit.types).toContain("OrganizationUnit");
   expect(unit.types).toContain("Unit");
   expect(unit.types).toContain("ResearchUnit");
+  expect(unit.descriptions).toHaveLength(2);
+  expect(unit.descriptions).toContainEqual(expect.objectContaining({ language: "en" }));
+  expect(unit.descriptions).toContainEqual(expect.objectContaining({ language: "fr" }));
 
   // MEMBER_OF: institution (main_supervision), department, CNRS (associated), ENA (associated)
   expect(unit.member_ofConnection.edges).toHaveLength(4);
@@ -237,6 +247,7 @@ test("Institution is member_of EPE institution", async () => {
         national_type
         long_labels { language value }
         identifiers { type value }
+        descriptions { language value }
         member_ofConnection {
           edges {
             properties {
@@ -280,6 +291,9 @@ test("Institution is member_of EPE institution", async () => {
   });
   expect(institution.identifiers).toContainEqual({ type: "uai", value: "02345" });
   expect(institution.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0etdup01x" });
+  expect(institution.descriptions).toHaveLength(2);
+  expect(institution.descriptions).toContainEqual(expect.objectContaining({ language: "en" }));
+  expect(institution.descriptions).toContainEqual(expect.objectContaining({ language: "fr" }));
 
   expect(institution.member_ofConnection.edges).toHaveLength(1);
   const edge = institution.member_ofConnection.edges[0];

@@ -17,6 +17,11 @@ MERGE (rs)-[:HAS_IDENTIFIER]->(rsi1)
 MERGE (rs)-[:HAS_LONG_LABEL]->(rsln1)
 MERGE (rs)-[:HAS_SHORT_LABEL]->(rssn1)
 
+CREATE (rsdesc1:TextLiteral {language: 'en', key: 'desc-lra-en', value: 'UMR in astrophysics under main supervision of Université Étienne Dupond and associated supervision of CNRS and École nationale d\'astrophysique, member of the Physics Department.'})
+CREATE (rsdesc2:TextLiteral {language: 'fr', key: 'desc-lra-fr', value: 'UMR en astrophysique sous tutelle principale de l\'Université Étienne Dupond et tutelles associées du CNRS et de l\'École nationale d\'astrophysique, membre du Département de physique.'})
+MERGE (rs)-[:HAS_DESCRIPTION]->(rsdesc1)
+MERGE (rs)-[:HAS_DESCRIPTION]->(rsdesc2)
+
 MERGE (p)-[:MEMBER_OF]->(rs)
 
 CREATE (epe:OrganizationUnit:Institution {uid: 'uai-07890', generic_type: 'institution', national_type: 'EPE'})
@@ -28,6 +33,11 @@ MERGE (epe)-[:HAS_LONG_LABEL]->(epeln1)
 MERGE (epe)-[:HAS_IDENTIFIER]->(epei1)
 MERGE (epe)-[:HAS_IDENTIFIER]->(epei2)
 
+CREATE (epedesc1:TextLiteral {language: 'en', key: 'desc-epe-en', value: 'Établissement public expérimental grouping universities and research institutions in the Paris Sud-Ouest area.'})
+CREATE (epedesc2:TextLiteral {language: 'fr', key: 'desc-epe-fr', value: 'Établissement public expérimental regroupant universités et établissements de recherche de la région Paris Sud-Ouest.'})
+MERGE (epe)-[:HAS_DESCRIPTION]->(epedesc1)
+MERGE (epe)-[:HAS_DESCRIPTION]->(epedesc2)
+
 CREATE (in:OrganizationUnit:Institution {uid: 'uai-02345', generic_type: 'institution'})
 CREATE (ini1:AgentIdentifier {type: 'uai', value: '02345'})
 CREATE (ini2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0etdup01x'})
@@ -36,6 +46,11 @@ CREATE (inn1:Literal {language: 'fr', value: 'Université Étienne Dupond', type
 MERGE (in)-[:HAS_IDENTIFIER]->(ini1)
 MERGE (in)-[:HAS_IDENTIFIER]->(ini2)
 MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
+
+CREATE (indesc1:TextLiteral {language: 'en', key: 'desc-in-en', value: 'University member of the Université Paris Sud-Ouest EPE, main supervising institution of the LRA research unit.'})
+CREATE (indesc2:TextLiteral {language: 'fr', key: 'desc-in-fr', value: 'Université membre de l\'EPE Université Paris Sud-Ouest, établissement de tutelle principale de l\'unité de recherche LRA.'})
+MERGE (in)-[:HAS_DESCRIPTION]->(indesc1)
+MERGE (in)-[:HAS_DESCRIPTION]->(indesc2)
 
 MERGE (in)-[:MEMBER_OF {start_date: date('2020-01-01')}]->(epe)
 
@@ -58,6 +73,11 @@ MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt2)
 MERGE (dept)-[:HAS_IDENTIFIER]->(depti1)
 MERGE (dept)-[:HAS_IDENTIFIER]->(depti2)
 
+CREATE (deptdesc1:TextLiteral {language: 'en', key: 'desc-dept-en', value: 'Physics department of Université Étienne Dupond, part of the Science faculty, hosting the LRA research unit.'})
+CREATE (deptdesc2:TextLiteral {language: 'fr', key: 'desc-dept-fr', value: 'Département de physique de l\'Université Étienne Dupond, composante de la Faculté des sciences, accueillant l\'unité LRA.'})
+MERGE (dept)-[:HAS_DESCRIPTION]->(deptdesc1)
+MERGE (dept)-[:HAS_DESCRIPTION]->(deptdesc2)
+
 MERGE (rs)-[:MEMBER_OF {start_date: date('2000-01-01')}]->(dept)
 MERGE (p)-[:MEMBER_OF]->(dept)
 MERGE (dept)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
@@ -68,6 +88,11 @@ CREATE (facln2:Literal {language: 'en', value: 'Science faculty', type: 'organiz
 
 MERGE (fac)-[:HAS_LONG_LABEL]->(facln1)
 MERGE (fac)-[:HAS_LONG_LABEL]->(facln2)
+
+CREATE (facdesc1:TextLiteral {language: 'en', key: 'desc-fac-en', value: 'Science faculty of Université Étienne Dupond, grouping science departments.'})
+CREATE (facdesc2:TextLiteral {language: 'fr', key: 'desc-fac-fr', value: 'Faculté des sciences de l\'Université Étienne Dupond, regroupant les départements scientifiques.'})
+MERGE (fac)-[:HAS_DESCRIPTION]->(facdesc1)
+MERGE (fac)-[:HAS_DESCRIPTION]->(facdesc2)
 
 MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(fac)
 MERGE (fac)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
@@ -83,6 +108,11 @@ MERGE (cnrs)-[:HAS_SHORT_LABEL]->(cnrssn1)
 MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi1)
 MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi2)
 
+CREATE (cnrsdesc1:TextLiteral {language: 'en', key: 'desc-cnrs-en', value: 'French national public research organization, associated supervision of the LRA research unit.'})
+CREATE (cnrsdesc2:TextLiteral {language: 'fr', key: 'desc-cnrs-fr', value: 'Organisme national de recherche scientifique public, tutelle associée de l\'unité de recherche LRA.'})
+MERGE (cnrs)-[:HAS_DESCRIPTION]->(cnrsdesc1)
+MERGE (cnrs)-[:HAS_DESCRIPTION]->(cnrsdesc2)
+
 MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2000-01-01')}]->(cnrs)
 
 CREATE (ena:OrganizationUnit:Institution {uid: 'uai-ENA-ASTRO', generic_type: 'institution', national_type: 'GE'})
@@ -93,6 +123,11 @@ CREATE (enai2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0enastr1x'})
 MERGE (ena)-[:HAS_LONG_LABEL]->(enaln1)
 MERGE (ena)-[:HAS_IDENTIFIER]->(enai1)
 MERGE (ena)-[:HAS_IDENTIFIER]->(enai2)
+
+CREATE (enadesc1:TextLiteral {language: 'en', key: 'desc-ena-en', value: 'National school of astrophysics, associated supervision of the LRA research unit.'})
+CREATE (enadesc2:TextLiteral {language: 'fr', key: 'desc-ena-fr', value: "École nationale d'astrophysique, tutelle associée de l'unité de recherche LRA."})
+MERGE (ena)-[:HAS_DESCRIPTION]->(enadesc1)
+MERGE (ena)-[:HAS_DESCRIPTION]->(enadesc2)
 
 MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2005-01-01')}]->(ena)
 
