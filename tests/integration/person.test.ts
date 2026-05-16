@@ -209,7 +209,7 @@ test("Fetch person data", async () => {
   expect(employmentNode.long_labels).toHaveLength(1);
   expect(employmentNode.long_labels).toContainEqual({
     language: "fr",
-    value: "Université de Paris",
+    value: "Université Étienne Dupond",
   });
   expect(employmentNode.short_labels).toHaveLength(0);
   expect(employmentNode.types).toHaveLength(2);

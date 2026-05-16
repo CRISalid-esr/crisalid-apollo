@@ -19,12 +19,19 @@ MERGE (rs)-[:HAS_SHORT_LABEL]->(rssn1)
 
 MERGE (p)-[:MEMBER_OF]->(rs)
 
+CREATE (epe:OrganizationUnit:Institution {uid: 'local-UPSO-001', generic_type: 'institution', national_type: 'EPE'})
+CREATE (epeln1:Literal {language: 'fr', value: 'Université Paris Sud-Ouest', type: 'organization_long_label'})
+
+MERGE (epe)-[:HAS_LONG_LABEL]->(epeln1)
+
 CREATE (in:OrganizationUnit:Institution {uid: 'uai-02345', generic_type: 'institution'})
 CREATE (ini1:AgentIdentifier {type: 'uai', value: '02345'})
-CREATE (inn1:Literal {language: 'fr', value: 'Université de Paris', type: 'organization_long_label'})
+CREATE (inn1:Literal {language: 'fr', value: 'Université Étienne Dupond', type: 'organization_long_label'})
 
 MERGE (in)-[:HAS_IDENTIFIER]->(ini1)
 MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
+
+MERGE (in)-[:MEMBER_OF {start_date: date('2020-01-01')}]->(epe)
 
 MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 

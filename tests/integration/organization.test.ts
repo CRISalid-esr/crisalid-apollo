@@ -189,3 +189,73 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(partOfFac.node.part_ofConnection.edges).toHaveLength(1);
   expect(partOfFac.node.part_ofConnection.edges[0].node.uid).toBe("uai-02345");
 }, 20000);
+
+test("Institution is member_of EPE institution", async () => {
+  const server = await createTestServer();
+  await runCypherFile("tests/data/graph.cypher");
+
+  const QUERY = `
+    query {
+      organizationUnits(where: { uid: "uai-02345" }) {
+        uid
+        generic_type
+        national_type
+        long_labels { language value }
+        member_ofConnection {
+          edges {
+            properties {
+              position
+              start_date
+              end_date
+            }
+            node {
+              uid
+              generic_type
+              national_type
+              long_labels { language value }
+              types
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const res = await server.executeOperation({ query: QUERY });
+  const body = res.body;
+  if (body?.kind !== "single") fail("Expected single result");
+
+  const result = body.singleResult;
+  if (result.errors) {
+    console.error(JSON.stringify(result.errors, null, 2));
+  }
+  expect(result.errors).toBeUndefined();
+
+  const data = result.data as OrganizationUnitsResponse;
+  expect(data.organizationUnits).toHaveLength(1);
+
+  const institution = data.organizationUnits[0];
+  expect(institution.uid).toBe("uai-02345");
+  expect(institution.generic_type).toBe("institution");
+  expect(institution.long_labels).toContainEqual({
+    language: "fr",
+    value: "Université Étienne Dupond",
+  });
+
+  expect(institution.member_ofConnection.edges).toHaveLength(1);
+  const edge = institution.member_ofConnection.edges[0];
+  expect(edge.properties.start_date).not.toBeNull();
+  expect(edge.properties.end_date).toBeNull();
+  expect(edge.properties.position).toBeNull();
+
+  const epe = edge.node;
+  expect(epe.uid).toBe("local-UPSO-001");
+  expect(epe.generic_type).toBe("institution");
+  expect(epe.national_type).toBe("EPE");
+  expect(epe.types).toContain("OrganizationUnit");
+  expect(epe.types).toContain("Institution");
+  expect(epe.long_labels).toContainEqual({
+    language: "fr",
+    value: "Université Paris Sud-Ouest",
+  });
+}, 20000);
