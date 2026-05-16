@@ -70,6 +70,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
               national_type
               long_labels { language value }
               local_types { language value }
+              identifiers { type value }
               types
             }
           }
@@ -141,6 +142,8 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(memberOfInstitution!.properties.end_date).toBeNull();
   expect(memberOfInstitution!.node.generic_type).toBe("institution");
   expect(memberOfInstitution!.node.types).toContain("Institution");
+  expect(memberOfInstitution!.node.identifiers).toContainEqual({ type: "uai", value: "02345" });
+  expect(memberOfInstitution!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0etdup01x" });
 
   const memberOfDept = unit.member_ofConnection.edges.find(
     (e) => e.node.uid === "local-DEPT-PHY-001"
@@ -167,6 +170,8 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
     language: "en",
     value: "Department",
   });
+  expect(memberOfDept!.node.identifiers).toContainEqual({ type: "local", value: "DEPT-PHY-001" });
+  expect(memberOfDept!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0deptph1x" });
 
   // PART_OF: ResearchUnit -> Faculty only
   expect(unit.part_ofConnection.edges).toHaveLength(1);
@@ -201,6 +206,7 @@ test("Institution is member_of EPE institution", async () => {
         generic_type
         national_type
         long_labels { language value }
+        identifiers { type value }
         member_ofConnection {
           edges {
             properties {
@@ -213,6 +219,7 @@ test("Institution is member_of EPE institution", async () => {
               generic_type
               national_type
               long_labels { language value }
+              identifiers { type value }
               types
             }
           }
@@ -241,6 +248,8 @@ test("Institution is member_of EPE institution", async () => {
     language: "fr",
     value: "Université Étienne Dupond",
   });
+  expect(institution.identifiers).toContainEqual({ type: "uai", value: "02345" });
+  expect(institution.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0etdup01x" });
 
   expect(institution.member_ofConnection.edges).toHaveLength(1);
   const edge = institution.member_ofConnection.edges[0];
@@ -249,7 +258,7 @@ test("Institution is member_of EPE institution", async () => {
   expect(edge.properties.position).toBeNull();
 
   const epe = edge.node;
-  expect(epe.uid).toBe("local-UPSO-001");
+  expect(epe.uid).toBe("uai-07890");
   expect(epe.generic_type).toBe("institution");
   expect(epe.national_type).toBe("EPE");
   expect(epe.types).toContain("OrganizationUnit");
@@ -258,4 +267,6 @@ test("Institution is member_of EPE institution", async () => {
     language: "fr",
     value: "Université Paris Sud-Ouest",
   });
+  expect(epe.identifiers).toContainEqual({ type: "uai", value: "07890" });
+  expect(epe.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0parso01x" });
 }, 20000);

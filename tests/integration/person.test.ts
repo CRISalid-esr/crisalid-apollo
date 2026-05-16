@@ -201,10 +201,14 @@ test("Fetch person data", async () => {
   const employmentNode = employment.node;
   expect(employmentNode.generic_type).toEqual("institution");
   expect(employmentNode.national_type).toBeNull();
-  expect(employmentNode.identifiers).toHaveLength(1);
+  expect(employmentNode.identifiers).toHaveLength(2);
   expect(employmentNode.identifiers).toContainEqual({
     type: "uai",
     value: "02345",
+  });
+  expect(employmentNode.identifiers).toContainEqual({
+    type: "ror",
+    value: "https://ror.org/0etdup01x",
   });
   expect(employmentNode.long_labels).toHaveLength(1);
   expect(employmentNode.long_labels).toContainEqual({

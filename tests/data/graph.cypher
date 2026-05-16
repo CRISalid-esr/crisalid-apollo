@@ -19,16 +19,22 @@ MERGE (rs)-[:HAS_SHORT_LABEL]->(rssn1)
 
 MERGE (p)-[:MEMBER_OF]->(rs)
 
-CREATE (epe:OrganizationUnit:Institution {uid: 'local-UPSO-001', generic_type: 'institution', national_type: 'EPE'})
+CREATE (epe:OrganizationUnit:Institution {uid: 'uai-07890', generic_type: 'institution', national_type: 'EPE'})
 CREATE (epeln1:Literal {language: 'fr', value: 'Université Paris Sud-Ouest', type: 'organization_long_label'})
+CREATE (epei1:AgentIdentifier {type: 'uai', value: '07890'})
+CREATE (epei2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0parso01x'})
 
 MERGE (epe)-[:HAS_LONG_LABEL]->(epeln1)
+MERGE (epe)-[:HAS_IDENTIFIER]->(epei1)
+MERGE (epe)-[:HAS_IDENTIFIER]->(epei2)
 
 CREATE (in:OrganizationUnit:Institution {uid: 'uai-02345', generic_type: 'institution'})
 CREATE (ini1:AgentIdentifier {type: 'uai', value: '02345'})
+CREATE (ini2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0etdup01x'})
 CREATE (inn1:Literal {language: 'fr', value: 'Université Étienne Dupond', type: 'organization_long_label'})
 
 MERGE (in)-[:HAS_IDENTIFIER]->(ini1)
+MERGE (in)-[:HAS_IDENTIFIER]->(ini2)
 MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
 
 MERGE (in)-[:MEMBER_OF {start_date: date('2020-01-01')}]->(epe)
@@ -42,11 +48,15 @@ CREATE (deptln1:Literal {language: 'fr', value: 'Département de physique', type
 CREATE (deptln2:Literal {language: 'en', value: 'Physics Department', type: 'organization_long_label'})
 CREATE (deptlt1:Literal {language: 'fr', value: 'Département', type: 'organization_local_type'})
 CREATE (deptlt2:Literal {language: 'en', value: 'Department', type: 'organization_local_type'})
+CREATE (depti1:AgentIdentifier {type: 'local', value: 'DEPT-PHY-001'})
+CREATE (depti2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0deptph1x'})
 
 MERGE (dept)-[:HAS_LONG_LABEL]->(deptln1)
 MERGE (dept)-[:HAS_LONG_LABEL]->(deptln2)
 MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt1)
 MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt2)
+MERGE (dept)-[:HAS_IDENTIFIER]->(depti1)
+MERGE (dept)-[:HAS_IDENTIFIER]->(depti2)
 
 MERGE (rs)-[:MEMBER_OF {start_date: date('2000-01-01')}]->(dept)
 MERGE (p)-[:MEMBER_OF]->(dept)
