@@ -23,14 +23,21 @@ type OrgMembershipEdge = {
   node: OrganizationUnit;
 };
 
-type OrganizationUnitWithMemberships = OrganizationUnit & {
-  member_ofConnection: {
-    edges: OrgMembershipEdge[];
+type PartOfEdge = {
+  properties: {
+    start_date: string | null;
+    end_date: string | null;
   };
+  node: OrganizationUnit;
+};
+
+type OrganizationUnitWithRelationships = OrganizationUnit & {
+  member_ofConnection: { edges: OrgMembershipEdge[] };
+  part_ofConnection: { edges: PartOfEdge[] };
 };
 
 type OrganizationUnitsResponse = {
-  organizationUnits: OrganizationUnitWithMemberships[];
+  organizationUnits: OrganizationUnitWithRelationships[];
 };
 
 test("ResearchUnit is member_of Institution with position and start_date", async () => {
@@ -61,6 +68,35 @@ test("ResearchUnit is member_of Institution with position and start_date", async
             }
           }
         }
+        part_ofConnection {
+          edges {
+            properties {
+              start_date
+              end_date
+            }
+            node {
+              uid
+              generic_type
+              national_type
+              long_labels { language value }
+              types
+              part_ofConnection {
+                edges {
+                  properties {
+                    start_date
+                    end_date
+                  }
+                  node {
+                    uid
+                    generic_type
+                    long_labels { language value }
+                    types
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   `;
@@ -76,6 +112,7 @@ test("ResearchUnit is member_of Institution with position and start_date", async
   expect(result.errors).toBeUndefined();
 
   const data = result.data as OrganizationUnitsResponse;
+
   expect(data.organizationUnits).toHaveLength(1);
 
   const unit = data.organizationUnits[0];
@@ -102,4 +139,30 @@ test("ResearchUnit is member_of Institution with position and start_date", async
     language: "fr",
     value: "Université de Paris",
   });
+
+  // PART_OF: ResearchUnit -> InstitutionSubdivision -> Institution
+  expect(unit.part_ofConnection.edges).toHaveLength(1);
+  const partOfEdge = unit.part_ofConnection.edges[0];
+  expect(partOfEdge.properties.start_date).not.toBeNull();
+  expect(partOfEdge.properties.end_date).toBeNull();
+
+  const fac = partOfEdge.node;
+  expect(fac.uid).toBe("local-FAC-SCI-001");
+  expect(fac.generic_type).toBe("institution_subdivision");
+  expect(fac.national_type).toBe("FAC");
+  expect(fac.types).toContain("OrganizationUnit");
+  expect(fac.types).toContain("InstitutionSubdivision");
+  expect(fac.long_labels).toContainEqual({ language: "fr", value: "Faculté des sciences" });
+  expect(fac.long_labels).toContainEqual({ language: "en", value: "Science faculty" });
+
+  expect(fac.part_ofConnection.edges).toHaveLength(1);
+  const facPartOfEdge = fac.part_ofConnection.edges[0];
+  expect(facPartOfEdge.properties.start_date).not.toBeNull();
+  expect(facPartOfEdge.properties.end_date).toBeNull();
+
+  const facParent = facPartOfEdge.node;
+  expect(facParent.uid).toBe("uai-02345");
+  expect(facParent.generic_type).toBe("institution");
+  expect(facParent.types).toContain("OrganizationUnit");
+  expect(facParent.types).toContain("Institution");
 }, 20000);

@@ -30,6 +30,16 @@ MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
 
 MERGE (rs)-[:MEMBER_OF {position: 'main_supervision', start_date: date('2000-01-01')}]->(in)
 
+CREATE (fac:OrganizationUnit:InstitutionSubdivision {uid: 'local-FAC-SCI-001', generic_type: 'institution_subdivision', national_type: 'FAC'})
+CREATE (facln1:Literal {language: 'fr', value: 'Faculté des sciences', type: 'organization_long_label'})
+CREATE (facln2:Literal {language: 'en', value: 'Science faculty', type: 'organization_long_label'})
+
+MERGE (fac)-[:HAS_LONG_LABEL]->(facln1)
+MERGE (fac)-[:HAS_LONG_LABEL]->(facln2)
+
+MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(fac)
+MERGE (fac)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
+
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 
