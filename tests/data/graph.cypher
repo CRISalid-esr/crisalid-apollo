@@ -148,6 +148,24 @@ MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc2)
 
 MERGE (team)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
 
+CREATE (axis:OrganizationUnit:UnitSubdivision {uid: 'local-AXIS-OBS-001', generic_type: 'unit_subdivision'})
+CREATE (axisln1:Literal {language: 'fr', value: "Axe astrophysique observationnelle", type: 'organization_long_label'})
+CREATE (axisln2:Literal {language: 'en', value: 'Observational astrophysics axis', type: 'organization_long_label'})
+CREATE (axislt1:Literal {language: 'fr', value: 'Axe de recherche', type: 'organization_local_type'})
+CREATE (axislt2:Literal {language: 'en', value: 'Research axis', type: 'organization_local_type'})
+CREATE (axisdesc1:TextLiteral {language: 'en', key: 'desc-axis-en', value: 'Research axis in observational astrophysics, part of the LRA research unit, grouping the observational astrophysics team.'})
+CREATE (axisdesc2:TextLiteral {language: 'fr', key: 'desc-axis-fr', value: "Axe de recherche en astrophysique observationnelle, composante de l'unité LRA, regroupant le groupe d'astrophysique observationnelle."})
+
+MERGE (axis)-[:HAS_LONG_LABEL]->(axisln1)
+MERGE (axis)-[:HAS_LONG_LABEL]->(axisln2)
+MERGE (axis)-[:HAS_LOCAL_TYPE]->(axislt1)
+MERGE (axis)-[:HAS_LOCAL_TYPE]->(axislt2)
+MERGE (axis)-[:HAS_DESCRIPTION]->(axisdesc1)
+MERGE (axis)-[:HAS_DESCRIPTION]->(axisdesc2)
+
+MERGE (axis)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
+MERGE (team)-[:MEMBER_OF {start_date: date('2010-01-01')}]->(axis)
+
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
 

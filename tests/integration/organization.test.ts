@@ -332,15 +332,14 @@ test("Team is part_of ResearchUnit with local type and description", async () =>
         types
         part_ofConnection {
           edges {
-            properties {
-              start_date
-              end_date
-            }
-            node {
-              uid
-              generic_type
-              types
-            }
+            properties { start_date end_date }
+            node { uid generic_type types }
+          }
+        }
+        member_ofConnection {
+          edges {
+            properties { position start_date end_date }
+            node { uid generic_type types }
           }
         }
       }
@@ -380,7 +379,81 @@ test("Team is part_of ResearchUnit with local type and description", async () =>
   expect(team.descriptions).toContainEqual(expect.objectContaining({ language: "fr" }));
 
   expect(team.part_ofConnection.edges).toHaveLength(1);
-  const edge = team.part_ofConnection.edges[0];
+  const partOfEdge = team.part_ofConnection.edges[0];
+  expect(partOfEdge.properties.start_date).not.toBeNull();
+  expect(partOfEdge.properties.end_date).toBeNull();
+  expect(partOfEdge.node.uid).toBe("local-123456");
+  expect(partOfEdge.node.generic_type).toBe("unit");
+  expect(partOfEdge.node.types).toContain("ResearchUnit");
+
+  expect(team.member_ofConnection.edges).toHaveLength(1);
+  const memberOfEdge = team.member_ofConnection.edges[0];
+  expect(memberOfEdge.properties.start_date).not.toBeNull();
+  expect(memberOfEdge.properties.end_date).toBeNull();
+  expect(memberOfEdge.node.uid).toBe("local-AXIS-OBS-001");
+  expect(memberOfEdge.node.generic_type).toBe("unit_subdivision");
+  expect(memberOfEdge.node.types).toContain("UnitSubdivision");
+}, 20000);
+
+test("UnitSubdivision is part_of ResearchUnit and groups the team", async () => {
+  const server = await createTestServer();
+  await runCypherFile("tests/data/graph.cypher");
+
+  const QUERY = `
+    query {
+      organizationUnits(where: { generic_type: "unit_subdivision" }) {
+        uid
+        generic_type
+        national_type
+        long_labels { language value }
+        local_types { language value }
+        descriptions { language value }
+        identifiers { type value }
+        types
+        part_ofConnection {
+          edges {
+            properties { start_date end_date }
+            node { uid generic_type types }
+          }
+        }
+      }
+    }
+  `;
+
+  const res = await server.executeOperation({ query: QUERY });
+  const body = res.body;
+  if (body?.kind !== "single") fail("Expected single result");
+
+  const result = body.singleResult;
+  if (result.errors) {
+    console.error(JSON.stringify(result.errors, null, 2));
+  }
+  expect(result.errors).toBeUndefined();
+
+  const data = result.data as OrganizationUnitsResponse;
+  expect(data.organizationUnits).toHaveLength(1);
+
+  const axis = data.organizationUnits[0];
+  expect(axis.uid).toBe("local-AXIS-OBS-001");
+  expect(axis.generic_type).toBe("unit_subdivision");
+  expect(axis.national_type).toBeNull();
+  expect(axis.types).toContain("OrganizationUnit");
+  expect(axis.types).toContain("UnitSubdivision");
+
+  expect(axis.long_labels).toContainEqual({ language: "fr", value: "Axe astrophysique observationnelle" });
+  expect(axis.long_labels).toContainEqual({ language: "en", value: "Observational astrophysics axis" });
+
+  expect(axis.local_types).toContainEqual({ language: "fr", value: "Axe de recherche" });
+  expect(axis.local_types).toContainEqual({ language: "en", value: "Research axis" });
+
+  expect(axis.identifiers).toHaveLength(0);
+
+  expect(axis.descriptions).toHaveLength(2);
+  expect(axis.descriptions).toContainEqual(expect.objectContaining({ language: "en" }));
+  expect(axis.descriptions).toContainEqual(expect.objectContaining({ language: "fr" }));
+
+  expect(axis.part_ofConnection.edges).toHaveLength(1);
+  const edge = axis.part_ofConnection.edges[0];
   expect(edge.properties.start_date).not.toBeNull();
   expect(edge.properties.end_date).toBeNull();
   expect(edge.node.uid).toBe("local-123456");
