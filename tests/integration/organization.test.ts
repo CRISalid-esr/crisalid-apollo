@@ -12,6 +12,7 @@ type TextLiteral = {
 
 type OrganizationUnit = {
   uid: string;
+  external: boolean | null;
   generic_type: string;
   national_type: string | null;
   long_labels: Literal[];
@@ -58,6 +59,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
     query {
       organizationUnits(where: { generic_type: "unit" }) {
         uid
+        external
         generic_type
         national_type
         long_labels { language value }
@@ -132,6 +134,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
 
   const unit = data.organizationUnits[0];
   expect(unit.uid).toBe("local-123456");
+  expect(unit.external).toBe(false);
   expect(unit.generic_type).toBe("unit");
   expect(unit.national_type).toBe("UMR");
   expect(unit.types).toContain("OrganizationUnit");
@@ -244,6 +247,7 @@ test("Institution is member_of EPE institution", async () => {
     query {
       organizationUnits(where: { uid: "uai-02345" }) {
         uid
+        external
         generic_type
         national_type
         long_labels { language value }
@@ -285,6 +289,7 @@ test("Institution is member_of EPE institution", async () => {
 
   const institution = data.organizationUnits[0];
   expect(institution.uid).toBe("uai-02345");
+  expect(institution.external).toBe(true);
   expect(institution.generic_type).toBe("institution");
   expect(institution.long_labels).toContainEqual({
     language: "fr",

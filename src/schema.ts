@@ -6,6 +6,7 @@ type AgentIdentifier @node {
 }
 type OrganizationUnit @node {
     uid: ID!
+    external: Boolean
     generic_type: String!
     national_type: String
     long_labels: [Literal!]! @relationship(type: "HAS_LONG_LABEL", direction: OUT)

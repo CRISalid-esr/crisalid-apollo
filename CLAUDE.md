@@ -52,8 +52,18 @@ Expected label sets by taxonomy level:
 | InstitutionSubdivision | `OrganizationUnit`, `InstitutionSubdivision` |
 | ResearchUnit | `OrganizationUnit`, `Unit`, `ResearchUnit` |
 | SupportUnit | `OrganizationUnit`, `Unit`, `SupportUnit` |
+| AdministrativeUnit | `OrganizationUnit`, `Unit`, `AdministrativeUnit` |
+| TeachingUnit | `OrganizationUnit`, `Unit`, `TeachingUnit` |
 | UnitSubdivision | `OrganizationUnit`, `UnitSubdivision` |
 | Team | `OrganizationUnit`, `Team` |
+
+### `external` field
+
+`OrganizationUnit` nodes carry an `external: Boolean` property:
+- `false` — structure comes from the institutional directory (the authoritative source)
+- `true` — structure was auto-created from the national registry to satisfy a relationship target (non-local uids such as `uai-xxx`)
+
+In the test fixture, all `local-xxx` nodes have `external: false`; all `uai-xxx` nodes have `external: true`.
 
 ### Relationship property types
 
