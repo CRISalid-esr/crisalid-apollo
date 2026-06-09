@@ -110,6 +110,12 @@ CREATE (sp1:SourcePerson {
   source_identifier: '123456'
 })
 
+CREATE (sp1i1:SourcePersonIdentifier {type: 'id_hal_s', value: 'marie-dupuis'})
+CREATE (sp1i2:SourcePersonIdentifier {type: 'orcid', value: '0000-0002-1111-2222'})
+
+MERGE (sp1)-[:HAS_IDENTIFIER]->(sp1i1)
+MERGE (sp1)-[:HAS_IDENTIFIER]->(sp1i2)
+
 CREATE (sc1:SourceContribution {
   role: 'AUTHOR'
 })
@@ -127,6 +133,34 @@ CREATE (sc2:SourceContribution {
 
 MERGE (sc1)-[:CONTRIBUTOR]->(sp1)
 MERGE (sc2)-[:CONTRIBUTOR]->(sp2)
+
+// SourcePersons that recorded Person p (via RECORDED_BY)
+CREATE (sp3:SourcePerson {
+  uid:               'hal-jdurand',
+  name:              'Jeannette Durand',
+  source:            'hal',
+  source_identifier: 'jdurand'
+})
+
+CREATE (sp3i1:SourcePersonIdentifier {type: 'id_hal_s', value: 'jeannette-durand'})
+CREATE (sp3i2:SourcePersonIdentifier {type: 'id_hal_i', value: '987123'})
+
+MERGE (sp3)-[:HAS_IDENTIFIER]->(sp3i1)
+MERGE (sp3)-[:HAS_IDENTIFIER]->(sp3i2)
+
+CREATE (sp4:SourcePerson {
+  uid:               'idref-jdurand',
+  name:              'Jeannette Durand',
+  source:            'idref',
+  source_identifier: '012345678'
+})
+
+CREATE (sp4i1:SourcePersonIdentifier {type: 'idref', value: '012345678'})
+
+MERGE (sp4)-[:HAS_IDENTIFIER]->(sp4i1)
+
+MERGE (p)-[:RECORDED_BY]->(sp3)
+MERGE (p)-[:RECORDED_BY]->(sp4)
 
 CREATE (s1:SourceRecord {
   issued:            '2012-09-19T00:00:00Z',

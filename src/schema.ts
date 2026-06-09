@@ -26,6 +26,7 @@ type Person @node {
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     memberships: [Organisation!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "Membership")
     employments: [Organisation!]! @relationship(type: "EMPLOYED_AT", direction: OUT, properties: "Employment")
+    recorded_by: [SourcePerson!]! @relationship(type:"RECORDED_BY", direction: OUT)
     external: Boolean
 }
 type Employment @relationshipProperties {
@@ -123,11 +124,17 @@ enum HalSubmitType {
     annex
 }
 
+type SourcePersonIdentifier @node {
+    type: String!
+    value: String!
+}
+
 type SourcePerson @node {
     uid: ID!
     name: String!
     source: String!
     source_identifier: String
+    identifiers: [SourcePersonIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
 }
 
 type SourceContribution @node {

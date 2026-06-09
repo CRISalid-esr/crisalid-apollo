@@ -5,6 +5,7 @@ type SourcePerson = {
   name: string;
   source: string;
   source_identifier: string;
+  identifiers: { type: string; value: string }[];
 };
 
 type SourceContribution = {
@@ -156,6 +157,10 @@ test("Fetch TextualDocument with source records", async () => {
                             name
                             source
                             source_identifier
+                            identifiers {
+                              type
+                              value
+                            }
                         }
                       }
                       has_identifiers {
@@ -317,6 +322,16 @@ test("Fetch TextualDocument with source records", async () => {
   expect(person1.name).toEqual("Marie Dupuis");
   expect(person1.source).toEqual("hal");
   expect(person1.source_identifier).toEqual("123456");
+  // SourcePersonIdentifier type/value reachable from a SourcePerson contributor.
+  expect(person1.identifiers).toHaveLength(2);
+  expect(person1.identifiers).toContainEqual({
+    type: "id_hal_s",
+    value: "marie-dupuis",
+  });
+  expect(person1.identifiers).toContainEqual({
+    type: "orcid",
+    value: "0000-0002-1111-2222",
+  });
   // expect(contributions[1].role).toEqual("THESIS-DIRECTOR");
   const contrib2 = contributions.find((c) => c.role === "THESIS-DIRECTOR");
   expect(contrib2).toBeDefined();
@@ -328,6 +343,7 @@ test("Fetch TextualDocument with source records", async () => {
   expect(person2.name).toEqual("Laurent Dupond");
   expect(person2.source).toEqual("hal");
   expect(person2.source_identifier).toEqual("987654");
+  expect(person2.identifiers).toHaveLength(0);
   const issue = scanrRecord?.published_in;
   expect(issue?.source).toEqual("ScanR");
   expect(issue?.source_identifier).toEqual("the_astrophysical_journal-ScanR");

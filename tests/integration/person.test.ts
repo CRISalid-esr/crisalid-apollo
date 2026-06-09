@@ -25,6 +25,14 @@ type Person = {
       node: Organisation;
     }[];
   };
+  recorded_by: SourcePerson[];
+};
+type SourcePerson = {
+  uid: string;
+  name: string;
+  source: string;
+  source_identifier: string;
+  identifiers: { type: string; value: string }[];
 };
 type PersonName = {
   first_names: Literal[];
@@ -108,6 +116,16 @@ test("Fetch person data", async () => {
                             }
                             last_names {
                               language
+                              value
+                            }
+                          }
+                          recorded_by {
+                            uid
+                            name
+                            source
+                            source_identifier
+                            identifiers {
+                              type
                               value
                             }
                           }
@@ -216,5 +234,39 @@ test("Fetch person data", async () => {
         value: "Durand",
       },
     ],
+  });
+  // Source persons that recorded this person, reachable through `recorded_by`.
+  expect(person?.recorded_by).toBeDefined();
+  expect(person?.recorded_by).toHaveLength(2);
+
+  const halSourcePerson = person?.recorded_by.find(
+    (sp) => sp.uid === "hal-jdurand",
+  );
+  expect(halSourcePerson).toBeDefined();
+  expect(halSourcePerson?.name).toEqual("Jeannette Durand");
+  expect(halSourcePerson?.source).toEqual("hal");
+  expect(halSourcePerson?.source_identifier).toEqual("jdurand");
+  // SourcePersonIdentifier type/value reachable from a Person via recorded_by.
+  expect(halSourcePerson?.identifiers).toHaveLength(2);
+  expect(halSourcePerson?.identifiers).toContainEqual({
+    type: "id_hal_s",
+    value: "jeannette-durand",
+  });
+  expect(halSourcePerson?.identifiers).toContainEqual({
+    type: "id_hal_i",
+    value: "987123",
+  });
+
+  const idrefSourcePerson = person?.recorded_by.find(
+    (sp) => sp.uid === "idref-jdurand",
+  );
+  expect(idrefSourcePerson).toBeDefined();
+  expect(idrefSourcePerson?.name).toEqual("Jeannette Durand");
+  expect(idrefSourcePerson?.source).toEqual("idref");
+  expect(idrefSourcePerson?.source_identifier).toEqual("012345678");
+  expect(idrefSourcePerson?.identifiers).toHaveLength(1);
+  expect(idrefSourcePerson?.identifiers).toContainEqual({
+    type: "idref",
+    value: "012345678",
   });
 }, 20000);
