@@ -240,14 +240,16 @@ CREATE (ao_idref:AgentIdentifier {type: 'idref', value: '123456789'})
 CREATE (ao_hal_1:AgentIdentifier {type: 'hal', value: '2001'})
 CREATE (ao_hal_2:AgentIdentifier {type: 'hal', value: '2002'})
 
-// Root
+// Root (with a non-null type)
 CREATE (ao_root:AuthorityOrganization:AuthorityOrganizationRoot {
   uid:                      'ao-root-1',
   display_names:            ['Université Anonyme'],
+  type:                     'institution',
   source_organization_uids: ['hal-2001', 'hal-2002']
 })
 
 // Two states attached to root
+// ao_state_1 intentionally has no `type` property to cover the nullable case
 CREATE (ao_state_1:AuthorityOrganization:AuthorityOrganizationState {
   uid:                      'ao-state-1',
   display_names:            ['Université Anonyme'],
