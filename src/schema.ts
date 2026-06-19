@@ -43,9 +43,21 @@ type Place @node {
     latitude: Float!
     longitude: Float!
 }
+
+enum AuthorityOrganizationType {
+    organization
+    research_team_group
+    laboratory
+    research_team
+    institution
+    laboratory_group
+    institution_group
+}
+
 type AuthorityOrganization @node {
     uid: ID!
     display_names: [String!]!
+    type: AuthorityOrganizationType
     places: [Place!]! @relationship(type: "HAS_POS", direction: OUT)
 
     # Computed union of direct identifiers + state identifiers, deduped (type,value)

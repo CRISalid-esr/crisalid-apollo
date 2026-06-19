@@ -10,6 +10,7 @@ type Place = {
 type AuthorityOrganization = {
   uid: string;
   display_names: string[];
+  type: string | null;
   places: Place[];
   identifiers: AgentIdentifier[];
 };
@@ -41,6 +42,7 @@ test("Fetch contributions affiliations: can target state or root", async () => {
           affiliations {
             uid
             display_names
+            type
             places{
               latitude,
               longitude
@@ -80,6 +82,8 @@ test("Fetch contributions affiliations: can target state or root", async () => {
   expect(c1!.affiliations).toHaveLength(1);
   expect(c1!.affiliations[0].uid).toBe("ao-state-1");
   expect(c1!.affiliations[0].display_names).toContain("Université Anonyme");
+  // ao-state-1 has no `type` property: nullable field resolves to null
+  expect(c1!.affiliations[0].type).toBeNull();
   expect(c1!.affiliations[0].places).toHaveLength(1);
   expect(c1!.affiliations[0].places[0]).toEqual({latitude:1.2344, longitude:44.33335})
 
@@ -96,6 +100,8 @@ test("Fetch contributions affiliations: can target state or root", async () => {
   expect(c2!.affiliations).toHaveLength(1);
   expect(c2!.affiliations[0].uid).toBe("ao-root-1");
   expect(c2!.affiliations[0].display_names).toContain("Université Anonyme");
+  // ao-root-1 has a non-null type
+  expect(c2!.affiliations[0].type).toBe("institution");
   expect(c2!.affiliations[0].places).toHaveLength(2);
   expect(c2!.affiliations[0].places).toEqual(
       expect.arrayContaining([
