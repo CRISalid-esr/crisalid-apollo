@@ -8,23 +8,164 @@ MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)
 MERGE (p)-[:HAS_IDENTIFIER]->(i3)
 
-CREATE (rs:Organisation:ResearchUnit {uid: 'local-123456', acronym: 'LRA'})
+CREATE (rs:OrganizationUnit:Unit:ResearchUnit {uid: 'local-123456', external: false, generic_type: 'unit', national_type: 'UMR'})
 CREATE (rsi1:AgentIdentifier {type: 'local', value: '123456'})
-CREATE (rsn:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique'})
+CREATE (rsln1:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique', type: 'organization_long_label'})
+CREATE (rssn1:Literal {language: 'fr', value: 'LRA', type: 'organization_short_label'})
 
 MERGE (rs)-[:HAS_IDENTIFIER]->(rsi1)
-MERGE (rs)-[:HAS_NAME]->(rsn)
+MERGE (rs)-[:HAS_LONG_LABEL]->(rsln1)
+MERGE (rs)-[:HAS_SHORT_LABEL]->(rssn1)
+
+CREATE (rsdesc1:TextLiteral {language: 'en', key: 'desc-lra-en', value: 'UMR in astrophysics under main supervision of Université Étienne Dupond and associated supervision of CNRS and École nationale d\'astrophysique, member of the Physics Department.'})
+CREATE (rsdesc2:TextLiteral {language: 'fr', key: 'desc-lra-fr', value: 'UMR en astrophysique sous tutelle principale de l\'Université Étienne Dupond et tutelles associées du CNRS et de l\'École nationale d\'astrophysique, membre du Département de physique.'})
+MERGE (rs)-[:HAS_DESCRIPTION]->(rsdesc1)
+MERGE (rs)-[:HAS_DESCRIPTION]->(rsdesc2)
 
 MERGE (p)-[:MEMBER_OF]->(rs)
 
-CREATE (in:Organisation:Institution {uid: 'local-123456'})
-CREATE (ini1:AgentIdentifier {type: 'UAI', value: '02345'})
-CREATE (inn:Literal {language: 'fr', value: 'Université de Paris'})
+CREATE (epe:OrganizationUnit:Institution {uid: 'uai-07890', external: true, generic_type: 'institution', national_type: 'EPE'})
+CREATE (epeln1:Literal {language: 'fr', value: 'Université Paris Sud-Ouest', type: 'organization_long_label'})
+CREATE (epei1:AgentIdentifier {type: 'uai', value: '07890'})
+CREATE (epei2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0parso01x'})
+
+MERGE (epe)-[:HAS_LONG_LABEL]->(epeln1)
+MERGE (epe)-[:HAS_IDENTIFIER]->(epei1)
+MERGE (epe)-[:HAS_IDENTIFIER]->(epei2)
+
+CREATE (epedesc1:TextLiteral {language: 'en', key: 'desc-epe-en', value: 'Établissement public expérimental grouping universities and research institutions in the Paris Sud-Ouest area.'})
+CREATE (epedesc2:TextLiteral {language: 'fr', key: 'desc-epe-fr', value: 'Établissement public expérimental regroupant universités et établissements de recherche de la région Paris Sud-Ouest.'})
+MERGE (epe)-[:HAS_DESCRIPTION]->(epedesc1)
+MERGE (epe)-[:HAS_DESCRIPTION]->(epedesc2)
+
+CREATE (in:OrganizationUnit:Institution {uid: 'uai-02345', external: true, generic_type: 'institution'})
+CREATE (ini1:AgentIdentifier {type: 'uai', value: '02345'})
+CREATE (ini2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0etdup01x'})
+CREATE (inn1:Literal {language: 'fr', value: 'Université Étienne Dupond', type: 'organization_long_label'})
 
 MERGE (in)-[:HAS_IDENTIFIER]->(ini1)
-MERGE (in)-[:HAS_NAME]->(inn)
+MERGE (in)-[:HAS_IDENTIFIER]->(ini2)
+MERGE (in)-[:HAS_LONG_LABEL]->(inn1)
+
+CREATE (indesc1:TextLiteral {language: 'en', key: 'desc-in-en', value: 'University member of the Université Paris Sud-Ouest EPE, main supervising institution of the LRA research unit.'})
+CREATE (indesc2:TextLiteral {language: 'fr', key: 'desc-in-fr', value: 'Université membre de l\'EPE Université Paris Sud-Ouest, établissement de tutelle principale de l\'unité de recherche LRA.'})
+MERGE (in)-[:HAS_DESCRIPTION]->(indesc1)
+MERGE (in)-[:HAS_DESCRIPTION]->(indesc2)
+
+MERGE (in)-[:MEMBER_OF {start_date: date('2020-01-01')}]->(epe)
 
 MERGE (p)-[:EMPLOYED_AT {position_code: 'PR'}]->(in)
+
+MERGE (rs)-[:MEMBER_OF {position: 'main_supervision', start_date: date('2000-01-01')}]->(in)
+
+CREATE (dept:OrganizationUnit:InstitutionSubdivision {uid: 'local-DEPT-PHY-001', external: false, generic_type: 'institution_subdivision'})
+CREATE (deptln1:Literal {language: 'fr', value: 'Département de physique', type: 'organization_long_label'})
+CREATE (deptln2:Literal {language: 'en', value: 'Physics Department', type: 'organization_long_label'})
+CREATE (deptlt1:Literal {language: 'fr', value: 'Département', type: 'organization_local_type'})
+CREATE (deptlt2:Literal {language: 'en', value: 'Department', type: 'organization_local_type'})
+CREATE (depti1:AgentIdentifier {type: 'local', value: 'DEPT-PHY-001'})
+CREATE (depti2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0deptph1x'})
+
+MERGE (dept)-[:HAS_LONG_LABEL]->(deptln1)
+MERGE (dept)-[:HAS_LONG_LABEL]->(deptln2)
+MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt1)
+MERGE (dept)-[:HAS_LOCAL_TYPE]->(deptlt2)
+MERGE (dept)-[:HAS_IDENTIFIER]->(depti1)
+MERGE (dept)-[:HAS_IDENTIFIER]->(depti2)
+
+CREATE (deptdesc1:TextLiteral {language: 'en', key: 'desc-dept-en', value: 'Physics department of Université Étienne Dupond, part of the Science faculty, hosting the LRA research unit.'})
+CREATE (deptdesc2:TextLiteral {language: 'fr', key: 'desc-dept-fr', value: 'Département de physique de l\'Université Étienne Dupond, composante de la Faculté des sciences, accueillant l\'unité LRA.'})
+MERGE (dept)-[:HAS_DESCRIPTION]->(deptdesc1)
+MERGE (dept)-[:HAS_DESCRIPTION]->(deptdesc2)
+
+MERGE (rs)-[:MEMBER_OF {start_date: date('2000-01-01')}]->(dept)
+MERGE (p)-[:MEMBER_OF]->(dept)
+MERGE (dept)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
+
+CREATE (fac:OrganizationUnit:InstitutionSubdivision {uid: 'local-FAC-SCI-001', external: false, generic_type: 'institution_subdivision', national_type: 'FAC'})
+CREATE (facln1:Literal {language: 'fr', value: 'Faculté des sciences', type: 'organization_long_label'})
+CREATE (facln2:Literal {language: 'en', value: 'Science faculty', type: 'organization_long_label'})
+
+MERGE (fac)-[:HAS_LONG_LABEL]->(facln1)
+MERGE (fac)-[:HAS_LONG_LABEL]->(facln2)
+
+CREATE (facdesc1:TextLiteral {language: 'en', key: 'desc-fac-en', value: 'Science faculty of Université Étienne Dupond, grouping science departments.'})
+CREATE (facdesc2:TextLiteral {language: 'fr', key: 'desc-fac-fr', value: 'Faculté des sciences de l\'Université Étienne Dupond, regroupant les départements scientifiques.'})
+MERGE (fac)-[:HAS_DESCRIPTION]->(facdesc1)
+MERGE (fac)-[:HAS_DESCRIPTION]->(facdesc2)
+
+MERGE (rs)-[:PART_OF {start_date: date('2000-01-01')}]->(fac)
+MERGE (fac)-[:PART_OF {start_date: date('1995-01-01')}]->(in)
+
+CREATE (cnrs:OrganizationUnit:Institution {uid: 'uai-CNRS', external: true, generic_type: 'institution', national_type: 'EPST'})
+CREATE (cnrsln1:Literal {language: 'fr', value: 'Centre national de la recherche scientifique', type: 'organization_long_label'})
+CREATE (cnrssn1:Literal {language: 'fr', value: 'CNRS', type: 'organization_short_label'})
+CREATE (cnrsi1:AgentIdentifier {type: 'uai', value: '0757581P'})
+CREATE (cnrsi2:AgentIdentifier {type: 'ror', value: 'https://ror.org/02feahw73'})
+
+MERGE (cnrs)-[:HAS_LONG_LABEL]->(cnrsln1)
+MERGE (cnrs)-[:HAS_SHORT_LABEL]->(cnrssn1)
+MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi1)
+MERGE (cnrs)-[:HAS_IDENTIFIER]->(cnrsi2)
+
+CREATE (cnrsdesc1:TextLiteral {language: 'en', key: 'desc-cnrs-en', value: 'French national public research organization, associated supervision of the LRA research unit.'})
+CREATE (cnrsdesc2:TextLiteral {language: 'fr', key: 'desc-cnrs-fr', value: 'Organisme national de recherche scientifique public, tutelle associée de l\'unité de recherche LRA.'})
+MERGE (cnrs)-[:HAS_DESCRIPTION]->(cnrsdesc1)
+MERGE (cnrs)-[:HAS_DESCRIPTION]->(cnrsdesc2)
+
+MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2000-01-01')}]->(cnrs)
+
+CREATE (ena:OrganizationUnit:Institution {uid: 'uai-ENA-ASTRO', external: true, generic_type: 'institution', national_type: 'GE'})
+CREATE (enaln1:Literal {language: 'fr', value: "École nationale d'astrophysique", type: 'organization_long_label'})
+CREATE (enai1:AgentIdentifier {type: 'uai', value: '0123456A'})
+CREATE (enai2:AgentIdentifier {type: 'ror', value: 'https://ror.org/0enastr1x'})
+
+MERGE (ena)-[:HAS_LONG_LABEL]->(enaln1)
+MERGE (ena)-[:HAS_IDENTIFIER]->(enai1)
+MERGE (ena)-[:HAS_IDENTIFIER]->(enai2)
+
+CREATE (enadesc1:TextLiteral {language: 'en', key: 'desc-ena-en', value: 'National school of astrophysics, associated supervision of the LRA research unit.'})
+CREATE (enadesc2:TextLiteral {language: 'fr', key: 'desc-ena-fr', value: "École nationale d'astrophysique, tutelle associée de l'unité de recherche LRA."})
+MERGE (ena)-[:HAS_DESCRIPTION]->(enadesc1)
+MERGE (ena)-[:HAS_DESCRIPTION]->(enadesc2)
+
+MERGE (rs)-[:MEMBER_OF {position: 'associated_supervision', start_date: date('2005-01-01')}]->(ena)
+
+CREATE (team:OrganizationUnit:Team {uid: 'local-TEAM-ASTRO-001', external: false, generic_type: 'team', national_type: 'TEAM'})
+CREATE (teamln1:Literal {language: 'fr', value: "Groupe d'astrophysique observationnelle", type: 'organization_long_label'})
+CREATE (teamln2:Literal {language: 'en', value: 'Observational astrophysics group', type: 'organization_long_label'})
+CREATE (teamlt1:Literal {language: 'fr', value: 'Groupe', type: 'organization_local_type'})
+CREATE (teamlt2:Literal {language: 'en', value: 'Group', type: 'organization_local_type'})
+CREATE (teamdesc1:TextLiteral {language: 'en', key: 'desc-team-en', value: 'Research team in observational astrophysics, part of the LRA research unit.'})
+CREATE (teamdesc2:TextLiteral {language: 'fr', key: 'desc-team-fr', value: "Équipe de recherche en astrophysique observationnelle, composante de l'unité LRA."})
+
+MERGE (team)-[:HAS_LONG_LABEL]->(teamln1)
+MERGE (team)-[:HAS_LONG_LABEL]->(teamln2)
+MERGE (team)-[:HAS_LOCAL_TYPE]->(teamlt1)
+MERGE (team)-[:HAS_LOCAL_TYPE]->(teamlt2)
+MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc1)
+MERGE (team)-[:HAS_DESCRIPTION]->(teamdesc2)
+
+MERGE (team)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
+MERGE (p)-[:MEMBER_OF]->(team)
+
+CREATE (axis:OrganizationUnit:UnitSubdivision {uid: 'local-AXIS-OBS-001', external: false, generic_type: 'unit_subdivision'})
+CREATE (axisln1:Literal {language: 'fr', value: "Axe astrophysique observationnelle", type: 'organization_long_label'})
+CREATE (axisln2:Literal {language: 'en', value: 'Observational astrophysics axis', type: 'organization_long_label'})
+CREATE (axislt1:Literal {language: 'fr', value: 'Axe de recherche', type: 'organization_local_type'})
+CREATE (axislt2:Literal {language: 'en', value: 'Research axis', type: 'organization_local_type'})
+CREATE (axisdesc1:TextLiteral {language: 'en', key: 'desc-axis-en', value: 'Research axis in observational astrophysics, part of the LRA research unit, grouping the observational astrophysics team.'})
+CREATE (axisdesc2:TextLiteral {language: 'fr', key: 'desc-axis-fr', value: "Axe de recherche en astrophysique observationnelle, composante de l'unité LRA, regroupant le groupe d'astrophysique observationnelle."})
+
+MERGE (axis)-[:HAS_LONG_LABEL]->(axisln1)
+MERGE (axis)-[:HAS_LONG_LABEL]->(axisln2)
+MERGE (axis)-[:HAS_LOCAL_TYPE]->(axislt1)
+MERGE (axis)-[:HAS_LOCAL_TYPE]->(axislt2)
+MERGE (axis)-[:HAS_DESCRIPTION]->(axisdesc1)
+MERGE (axis)-[:HAS_DESCRIPTION]->(axisdesc2)
+
+MERGE (axis)-[:PART_OF {start_date: date('2010-01-01')}]->(rs)
+MERGE (team)-[:MEMBER_OF {start_date: date('2010-01-01')}]->(axis)
 
 CREATE (c1:Concept {uid: 'http://www.idref.fr/02734004x/id', uri: 'http://www.idref.fr/02734004x/id'})
 CREATE (c1pl1:Literal {value: 'Analyse des données', language: 'fr'})
