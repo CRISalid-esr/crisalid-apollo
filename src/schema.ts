@@ -41,6 +41,7 @@ type Person @node {
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
     memberships: [OrganizationUnit!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "Membership")
     employments: [OrganizationUnit!]! @relationship(type: "EMPLOYED_AT", direction: OUT, properties: "Employment")
+    recorded_by: [SourcePerson!]! @relationship(type:"RECORDED_BY", direction: OUT)
     external: Boolean
 }
 type Employment @relationshipProperties {
@@ -57,9 +58,21 @@ type Place @node {
     latitude: Float!
     longitude: Float!
 }
+
+enum AuthorityOrganizationType {
+    organization
+    research_team_group
+    laboratory
+    research_team
+    institution
+    laboratory_group
+    institution_group
+}
+
 type AuthorityOrganization @node {
     uid: ID!
     display_names: [String!]!
+    type: AuthorityOrganizationType
     places: [Place!]! @relationship(type: "HAS_POS", direction: OUT)
 
     # Computed union of direct identifiers + state identifiers, deduped (type,value)
@@ -138,11 +151,17 @@ enum HalSubmitType {
     annex
 }
 
+type SourcePersonIdentifier @node {
+    type: String!
+    value: String!
+}
+
 type SourcePerson @node {
     uid: ID!
     name: String!
     source: String!
     source_identifier: String
+    identifiers: [SourcePersonIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
 }
 
 type SourceContribution @node {
