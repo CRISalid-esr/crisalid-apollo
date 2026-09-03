@@ -12,7 +12,7 @@ type Person = {
         end_date: string;
         position_code: string;
       };
-      node: Organisation;
+      node: OrganizationUnit;
     }[];
   };
   employmentsConnection: {
@@ -22,9 +22,17 @@ type Person = {
         end_date: string;
         position_code: string;
       };
-      node: Organisation;
+      node: OrganizationUnit;
     }[];
   };
+  recorded_by: SourcePerson[];
+};
+type SourcePerson = {
+  uid: string;
+  name: string;
+  source: string;
+  source_identifier: string;
+  identifiers: { type: string; value: string }[];
 };
 type PersonName = {
   first_names: Literal[];
@@ -34,11 +42,13 @@ type Literal = {
   value: string;
   language: string;
 };
-type Organisation = {
+type OrganizationUnit = {
   uid: string;
-  acronym: string;
+  generic_type: string;
+  national_type: string | null;
   identifiers: { type: string; value: string }[];
-  names: Literal[];
+  long_labels: Literal[];
+  short_labels: Literal[];
   types: string[];
 };
 type PeopleResponse = {
@@ -65,12 +75,17 @@ test("Fetch person data", async () => {
                                 position_code
                               }
                               node {
-                                acronym
+                                generic_type
+                                national_type
                                 identifiers {
                                   type
                                   value
                                 }
-                                names {
+                                long_labels {
+                                  language
+                                  value
+                                }
+                                short_labels {
                                   language
                                   value
                                 }
@@ -87,12 +102,17 @@ test("Fetch person data", async () => {
                                 position_code
                               }
                               node {
-                                acronym
+                                generic_type
+                                national_type
                                 identifiers {
                                   type
                                   value
                                 }
-                                names {
+                                long_labels {
+                                  language
+                                  value
+                                }
+                                short_labels {
                                   language
                                   value
                                 }
@@ -108,6 +128,16 @@ test("Fetch person data", async () => {
                             }
                             last_names {
                               language
+                              value
+                            }
+                          }
+                          recorded_by {
+                            uid
+                            name
+                            source
+                            source_identifier
+                            identifiers {
+                              type
                               value
                             }
                           }
@@ -145,48 +175,80 @@ test("Fetch person data", async () => {
     type: "local",
     value: "jdurand@univ-domain.edu",
   });
-  expect(person?.membershipsConnection.edges).toHaveLength(1);
-  const membership = person?.membershipsConnection.edges[0];
-  expect(membership.properties.start_date).toBeNull();
-  expect(membership.properties.end_date).toBeNull();
-  expect(membership.properties.position_code).toBeNull();
-  const node = membership.node;
-  expect(node.acronym).toEqual("LRA");
+  expect(person?.membershipsConnection.edges).toHaveLength(3);
+
+  const researchUnitMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-123456"
+  );
+  expect(researchUnitMembership).toBeDefined();
+  expect(researchUnitMembership!.properties.start_date).toBeNull();
+  expect(researchUnitMembership!.properties.end_date).toBeNull();
+  expect(researchUnitMembership!.properties.position_code).toBeNull();
+  const node = researchUnitMembership!.node;
+  expect(node.generic_type).toEqual("unit");
+  expect(node.national_type).toEqual("UMR");
   expect(node.identifiers).toHaveLength(1);
-  expect(node.identifiers).toContainEqual({
-    type: "local",
-    value: "123456",
-  });
-  expect(node.names).toHaveLength(1);
-  expect(node.names).toContainEqual({
+  expect(node.identifiers).toContainEqual({ type: "local", value: "123456" });
+  expect(node.long_labels).toHaveLength(1);
+  expect(node.long_labels).toContainEqual({
     language: "fr",
     value: "Laboratoire de recherche en astrophysique",
   });
-  expect(node.types).toHaveLength(2);
-  expect(node.types).toContainEqual("Organisation");
+  expect(node.short_labels).toHaveLength(1);
+  expect(node.short_labels).toContainEqual({ language: "fr", value: "LRA" });
+  expect(node.types).toHaveLength(3);
+  expect(node.types).toContainEqual("OrganizationUnit");
+  expect(node.types).toContainEqual("Unit");
   expect(node.types).toContainEqual("ResearchUnit");
-  expect(node.uid).toEqual("local-123456");
+
+  const deptMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-DEPT-PHY-001"
+  );
+  expect(deptMembership).toBeDefined();
+  expect(deptMembership!.node.generic_type).toEqual("institution_subdivision");
+  expect(deptMembership!.node.types).toContainEqual("InstitutionSubdivision");
+  expect(deptMembership!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Département de physique",
+  });
+
+  const teamMembership = person?.membershipsConnection.edges.find(
+    (e) => e.node.uid === "local-TEAM-ASTRO-001"
+  );
+  expect(teamMembership).toBeDefined();
+  expect(teamMembership!.node.generic_type).toEqual("team");
+  expect(teamMembership!.node.types).toContainEqual("Team");
+  expect(teamMembership!.node.long_labels).toContainEqual({
+    language: "fr",
+    value: "Groupe d'astrophysique observationnelle",
+  });
   expect(person?.employmentsConnection.edges).toHaveLength(1);
   const employment = person?.employmentsConnection.edges[0];
   expect(employment.properties.start_date).toBeNull();
   expect(employment.properties.end_date).toBeNull();
   expect(employment.properties.position_code).toEqual("PR");
   const employmentNode = employment.node;
-  expect(employmentNode.acronym).toBeNull();
-  expect(employmentNode.identifiers).toHaveLength(1);
+  expect(employmentNode.generic_type).toEqual("institution");
+  expect(employmentNode.national_type).toBeNull();
+  expect(employmentNode.identifiers).toHaveLength(2);
   expect(employmentNode.identifiers).toContainEqual({
-    type: "UAI",
+    type: "uai",
     value: "02345",
   });
-  expect(employmentNode.names).toHaveLength(1);
-  expect(employmentNode.names).toContainEqual({
-    language: "fr",
-    value: "Université de Paris",
+  expect(employmentNode.identifiers).toContainEqual({
+    type: "ror",
+    value: "https://ror.org/0etdup01x",
   });
+  expect(employmentNode.long_labels).toHaveLength(1);
+  expect(employmentNode.long_labels).toContainEqual({
+    language: "fr",
+    value: "Université Étienne Dupond",
+  });
+  expect(employmentNode.short_labels).toHaveLength(0);
   expect(employmentNode.types).toHaveLength(2);
-  expect(employmentNode.types).toContainEqual("Organisation");
+  expect(employmentNode.types).toContainEqual("OrganizationUnit");
   expect(employmentNode.types).toContainEqual("Institution");
-  expect(employmentNode.uid).toEqual("local-123456");
+  expect(employmentNode.uid).toEqual("uai-02345");
   expect(person?.names).toHaveLength(2);
   const names = person?.names;
   expect(names).toContainEqual({
@@ -216,5 +278,39 @@ test("Fetch person data", async () => {
         value: "Durand",
       },
     ],
+  });
+  // Source persons that recorded this person, reachable through `recorded_by`.
+  expect(person?.recorded_by).toBeDefined();
+  expect(person?.recorded_by).toHaveLength(2);
+
+  const halSourcePerson = person?.recorded_by.find(
+    (sp) => sp.uid === "hal-jdurand",
+  );
+  expect(halSourcePerson).toBeDefined();
+  expect(halSourcePerson?.name).toEqual("Jeannette Durand");
+  expect(halSourcePerson?.source).toEqual("hal");
+  expect(halSourcePerson?.source_identifier).toEqual("jdurand");
+  // SourcePersonIdentifier type/value reachable from a Person via recorded_by.
+  expect(halSourcePerson?.identifiers).toHaveLength(2);
+  expect(halSourcePerson?.identifiers).toContainEqual({
+    type: "id_hal_s",
+    value: "jeannette-durand",
+  });
+  expect(halSourcePerson?.identifiers).toContainEqual({
+    type: "id_hal_i",
+    value: "987123",
+  });
+
+  const idrefSourcePerson = person?.recorded_by.find(
+    (sp) => sp.uid === "idref-jdurand",
+  );
+  expect(idrefSourcePerson).toBeDefined();
+  expect(idrefSourcePerson?.name).toEqual("Jeannette Durand");
+  expect(idrefSourcePerson?.source).toEqual("idref");
+  expect(idrefSourcePerson?.source_identifier).toEqual("012345678");
+  expect(idrefSourcePerson?.identifiers).toHaveLength(1);
+  expect(idrefSourcePerson?.identifiers).toContainEqual({
+    type: "idref",
+    value: "012345678",
   });
 }, 20000);

@@ -4,16 +4,31 @@ type AgentIdentifier @node {
     type: String!
     value: String!
 }
-type Organisation @node {
+type OrganizationUnit @node {
     uid: ID!
-    acronym: String
-    signature: String
-    names: [Literal!]! @relationship(type: "HAS_NAME", direction: OUT)
+    external: Boolean
+    generic_type: String!
+    national_type: String
+    long_labels: [Literal!]! @relationship(type: "HAS_LONG_LABEL", direction: OUT)
+    short_labels: [Literal!]! @relationship(type: "HAS_SHORT_LABEL", direction: OUT)
+    local_types: [Literal!]! @relationship(type: "HAS_LOCAL_TYPE", direction: OUT)
+    descriptions: [TextLiteral!]! @relationship(type: "HAS_DESCRIPTION", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
+    member_of: [OrganizationUnit!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "OrgMembership")
+    part_of: [OrganizationUnit!]! @relationship(type: "PART_OF", direction: OUT, properties: "OrgInclusion")
     types: [String!]! @cypher(statement: """
     RETURN labels(this) AS types
     """,
         columnName: "types")
+}
+type OrgMembership @relationshipProperties {
+    position: String
+    start_date: Date
+    end_date: Date
+}
+type OrgInclusion @relationshipProperties {
+    start_date: Date
+    end_date: Date
 }
 type PersonName @node {
     first_names: [Literal!]! @relationship(type: "HAS_FIRST_NAME", direction: OUT)
@@ -24,23 +39,41 @@ type Person @node {
     display_name: String
     names: [PersonName!]! @relationship(type: "HAS_NAME", direction: OUT)
     identifiers: [AgentIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
-    memberships: [Organisation!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "Membership")
-    employments: [Organisation!]! @relationship(type: "EMPLOYED_AT", direction: OUT, properties: "Employment")
+    memberships: [OrganizationUnit!]! @relationship(type: "MEMBER_OF", direction: OUT, properties: "Membership")
+    employments: [OrganizationUnit!]! @relationship(type: "EMPLOYED_AT", direction: OUT, properties: "Employment")
+    recorded_by: [SourcePerson!]! @relationship(type:"RECORDED_BY", direction: OUT)
     external: Boolean
 }
 type Employment @relationshipProperties {
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
     position_code: String
 }
 type Membership @relationshipProperties {
-    start_date: DateTime
-    end_date: DateTime
+    start_date: Date
+    end_date: Date
     position_code: String
 }
+type Place @node {
+    latitude: Float!
+    longitude: Float!
+}
+
+enum AuthorityOrganizationType {
+    organization
+    research_team_group
+    laboratory
+    research_team
+    institution
+    laboratory_group
+    institution_group
+}
+
 type AuthorityOrganization @node {
     uid: ID!
     display_names: [String!]!
+    type: AuthorityOrganizationType
+    places: [Place!]! @relationship(type: "HAS_POS", direction: OUT)
 
     # Computed union of direct identifiers + state identifiers, deduped (type,value)
     identifiers: [AgentIdentifier!]!
@@ -118,11 +151,17 @@ enum HalSubmitType {
     annex
 }
 
+type SourcePersonIdentifier @node {
+    type: String!
+    value: String!
+}
+
 type SourcePerson @node {
     uid: ID!
     name: String!
     source: String!
     source_identifier: String
+    identifiers: [SourcePersonIdentifier!]! @relationship(type: "HAS_IDENTIFIER", direction: OUT)
 }
 
 type SourceContribution @node {
