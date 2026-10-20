@@ -3,6 +3,7 @@ export const typeDefs = `#graphql
 type AgentIdentifier @node {
     type: String!
     value: String!
+    validated: Boolean
 }
 type OrganizationUnit @node {
     uid: ID!
