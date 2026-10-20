@@ -23,6 +23,13 @@ tests/
     person.test.ts        — person queries, memberships, employments
     organization.test.ts  — organization unit queries, MEMBER_OF / PART_OF
 ```
+---
+
+## Git commits
+
+- Commits trigger Husky pre-commit hooks (lint, type-check, etc.). Do not skip them.
+- Commit messages must be short and to the point. A short bullet lists, no detailed explanations.
+- Do not add a `Co-Authored-By` trailer or any other signature to commits.
 
 ---
 

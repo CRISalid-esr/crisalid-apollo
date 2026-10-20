@@ -314,3 +314,50 @@ test("Fetch person data", async () => {
     value: "012345678",
   });
 }, 20000);
+
+test("Fetch person identifier validation flags", async () => {
+  const server = await createTestServer();
+  await runCypherFile("tests/data/graph.cypher");
+
+  const GET_IDENTIFIER_FLAGS = `
+                query People {
+                        people {
+                          identifiers {
+                            type
+                            value
+                            validated
+                            authenticated
+                          }
+                        }
+                }
+        `;
+
+  const response = await server.executeOperation({
+    query: GET_IDENTIFIER_FLAGS,
+  });
+  if (response.body.kind !== "single") {
+    throw new Error("Expected a single result");
+  }
+  const result = response.body.singleResult;
+  expect(result.errors).toBeUndefined();
+  const identifiers = (result.data as PeopleResponse)?.people[0]?.identifiers;
+  expect(identifiers).toContainEqual({
+    type: "idref",
+    value: "012345678",
+    validated: true,
+    authenticated: null,
+  });
+  expect(identifiers).toContainEqual({
+    type: "orcid",
+    value: "0000-0001-2345-6789",
+    validated: true,
+    authenticated: true,
+  });
+  // Flags are absent on identifiers never confirmed by a user
+  expect(identifiers).toContainEqual({
+    type: "local",
+    value: "jdurand@univ-domain.edu",
+    validated: null,
+    authenticated: null,
+  });
+}, 20000);
