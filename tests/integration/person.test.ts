@@ -315,7 +315,7 @@ test("Fetch person data", async () => {
   });
 }, 20000);
 
-test("Fetch person identifier validation flags", async () => {
+test("Fetch person identifier validation flag", async () => {
   const server = await createTestServer();
   await runCypherFile("tests/data/graph.cypher");
 
@@ -326,7 +326,6 @@ test("Fetch person identifier validation flags", async () => {
                             type
                             value
                             validated
-                            authenticated
                           }
                         }
                 }
@@ -345,19 +344,16 @@ test("Fetch person identifier validation flags", async () => {
     type: "idref",
     value: "012345678",
     validated: true,
-    authenticated: null,
   });
   expect(identifiers).toContainEqual({
     type: "orcid",
     value: "0000-0001-2345-6789",
     validated: true,
-    authenticated: true,
   });
-  // Flags are absent on identifiers never confirmed by a user
+  // The flag is absent on identifiers never confirmed by a user
   expect(identifiers).toContainEqual({
     type: "local",
     value: "jdurand@univ-domain.edu",
     validated: null,
-    authenticated: null,
   });
 }, 20000);

@@ -2,7 +2,7 @@ CREATE (p:Person {uid: 'local-jdurand@univ-domain.edu'})
 
 CREATE (i1:AgentIdentifier {type: 'local', value: 'jdurand@univ-domain.edu'})
 CREATE (i2:AgentIdentifier {type: 'idref', value: '012345678', validated: true})
-CREATE (i3:AgentIdentifier {type: 'orcid', value: '0000-0001-2345-6789', validated: true, authenticated: true})
+CREATE (i3:AgentIdentifier {type: 'orcid', value: '0000-0001-2345-6789', validated: true})
 
 MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)

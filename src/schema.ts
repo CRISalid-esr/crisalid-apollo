@@ -4,7 +4,6 @@ type AgentIdentifier @node {
     type: String!
     value: String!
     validated: Boolean
-    authenticated: Boolean
 }
 type OrganizationUnit @node {
     uid: ID!
