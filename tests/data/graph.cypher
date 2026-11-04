@@ -8,7 +8,7 @@ MERGE (p)-[:HAS_IDENTIFIER]->(i1)
 MERGE (p)-[:HAS_IDENTIFIER]->(i2)
 MERGE (p)-[:HAS_IDENTIFIER]->(i3)
 
-CREATE (rs:OrganizationUnit:Unit:ResearchUnit {uid: 'local-123456', external: false, generic_type: 'unit', national_type: 'UMR'})
+CREATE (rs:OrganizationUnit:Unit:ResearchUnit {uid: 'local-123456', external: false, generic_type: 'unit', national_type: 'UMR', hal_collection: 'https://hal.science/LRA'})
 CREATE (rsi1:AgentIdentifier {type: 'local', value: '123456'})
 CREATE (rsln1:Literal {language: 'fr', value: 'Laboratoire de recherche en astrophysique', type: 'organization_long_label'})
 CREATE (rssn1:Literal {language: 'fr', value: 'LRA', type: 'organization_short_label'})
