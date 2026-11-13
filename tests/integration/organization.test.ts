@@ -15,6 +15,7 @@ type OrganizationUnit = {
   external: boolean | null;
   generic_type: string;
   national_type: string | null;
+  hal_collection?: string | null;
   long_labels: Literal[];
   short_labels: Literal[];
   local_types: Literal[];
@@ -62,6 +63,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
         external
         generic_type
         national_type
+        hal_collection
         long_labels { language value }
         short_labels { language value }
         local_types { language value }
@@ -78,6 +80,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
               uid
               generic_type
               national_type
+              hal_collection
               long_labels { language value }
               local_types { language value }
               identifiers { type value }
@@ -137,6 +140,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(unit.external).toBe(false);
   expect(unit.generic_type).toBe("unit");
   expect(unit.national_type).toBe("UMR");
+  expect(unit.hal_collection).toBe("https://hal.science/LRA");
   expect(unit.types).toContain("OrganizationUnit");
   expect(unit.types).toContain("Unit");
   expect(unit.types).toContain("ResearchUnit");
@@ -155,6 +159,7 @@ test("ResearchUnit relationships: member_of and part_of", async () => {
   expect(memberOfInstitution!.properties.start_date).not.toBeNull();
   expect(memberOfInstitution!.properties.end_date).toBeNull();
   expect(memberOfInstitution!.node.generic_type).toBe("institution");
+  expect(memberOfInstitution!.node.hal_collection).toBeNull();
   expect(memberOfInstitution!.node.types).toContain("Institution");
   expect(memberOfInstitution!.node.identifiers).toContainEqual({ type: "uai", value: "02345" });
   expect(memberOfInstitution!.node.identifiers).toContainEqual({ type: "ror", value: "https://ror.org/0etdup01x" });

@@ -3,12 +3,14 @@ export const typeDefs = `#graphql
 type AgentIdentifier @node {
     type: String!
     value: String!
+    validated: Boolean
 }
 type OrganizationUnit @node {
     uid: ID!
     external: Boolean
     generic_type: String!
     national_type: String
+    hal_collection: String
     long_labels: [Literal!]! @relationship(type: "HAS_LONG_LABEL", direction: OUT)
     short_labels: [Literal!]! @relationship(type: "HAS_SHORT_LABEL", direction: OUT)
     local_types: [Literal!]! @relationship(type: "HAS_LOCAL_TYPE", direction: OUT)
